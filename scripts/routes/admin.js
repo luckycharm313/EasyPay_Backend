@@ -8,5 +8,6 @@ var receipt = require('../controllers/admin/receipt');
 router.post('/employee/add', employee.add);
 router.post('/receipt/orders', middleware.admin, receipt.orders);
 router.post('/receipt/get', middleware.admin, receipt.get);
+router.post('/receipt/split', middleware.admin, receipt.split);
 
 module.exports = router;

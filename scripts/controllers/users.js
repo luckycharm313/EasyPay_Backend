@@ -5,7 +5,7 @@ var passwordHash = require('password-hash');
 var Promise = require('promise');
 var DB = require('../../config/database');
 var constants = require('../../config/constants')
-var userModel = require('../models/userModel');
+var employeeModel = require('../models/employeeModel');
 
 async function aaa (req, res, next) {
   

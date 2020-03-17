@@ -24,7 +24,8 @@ function admin(req, res, next) {
     if( err ) {
       return common.send(res, 300, '', 'There is no authenticate token.');      
     } else {
-      res.locals.admin_id = decoded.id;
+      res.locals.employee_id = decoded.id;
+      res.locals.self_id = decoded.self_id;
       return next();
     }
   });

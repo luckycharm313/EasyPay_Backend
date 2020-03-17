@@ -2,9 +2,10 @@ var Promise = require('promise');
 var DB = require('../../config/database');
 
 module.exports = {
-  findUserByEmail: function ( email ) {
-    var query = 'SELECT * FROM users WHERE email = ?';
-    var values = [email];
+  findUserBySelfId: function ( selfId, companyId ) {
+
+    var query = 'SELECT * FROM employee WHERE self_id = ? AND company_id = ?';
+    var values = [selfId, companyId];
     
     return new Promise(function (resolve, reject) {
       DB.query(query, values, function (err, data) {
@@ -14,7 +15,8 @@ module.exports = {
     });
   },
   findUserById: function ( id ) {
-    var query = 'SELECT * FROM users WHERE id = ?';
+
+    var query = 'SELECT * FROM employee WHERE id = ?';
     var values = [id];
     
     return new Promise(function (resolve, reject) {

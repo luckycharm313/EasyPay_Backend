@@ -229,7 +229,7 @@ function runDevServer(host, port, protocol) {
       // cert: fs.readFileSync('/path/to/server.crt'),
       // ca: fs.readFileSync('/path/to/ca.pem'),
     // }
-    protocol === "https"
+    protocol === "http"
     ,
     host: host
   });

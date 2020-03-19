@@ -54,6 +54,7 @@
     "cookie-parser": "^1.4.4",
     "dotenv": "^2.0.0",
     "fs": "^0.0.1-security",
+    "generate-sms-verification-code": "^1.0.5",
     "http": "^0.0.0",
     "https": "^1.0.0",
     "jsonwebtoken": "^8.5.1",

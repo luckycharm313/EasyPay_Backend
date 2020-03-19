@@ -37,7 +37,7 @@ var multer = require('multer');
 var upload = multer();
 
 var app = express();
-// var routes = require('./routes/index');
+var routes = require('./routes/index');
 var api = require('./routes/api');
 var admin = require('./routes/admin');
 
@@ -57,7 +57,7 @@ app.use(function(req, res, next) {
 });
 
 
-// app.use('/', routes);
+app.use('/', routes);
 app.use('/api', api);
 app.use('/admin', admin);
 
@@ -257,7 +257,7 @@ function run(port) {
   var protocol = process.env.HTTPS === 'true' ? "https" : "http";
   var host = process.env.HOST || 'localhost';
   setupCompiler(host, port, protocol);
-  // runDevServer(host, port, protocol);
+  runDevServer(host, port, protocol);
 }
 
 detect(DEFAULT_PORT).then(port => {

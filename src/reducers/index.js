@@ -3,14 +3,14 @@ import { createStore, applyMiddleware } from 'redux'
 import thunk from 'redux-thunk'
 import { persistStore, persistReducer } from 'redux-persist'
 import storage from 'redux-persist/lib/storage' // defaults to localStorage for web
-import users from './users';
+import startup from './startup';
 
 const rootReducer = combineReducers({
-    users: users,
+    startup: startup,
 });
 
 const persistConfig = {
-  key: '@manifesto-root',
+  key: '@easypay-root',
   storage,
 }
 

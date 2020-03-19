@@ -6,13 +6,15 @@ import './css/pure-min.css';
 import './App.css';
 
 import Dashboard from './containers/Dashboard';
+import Landing from './containers/Landing';
 
 class App extends Component {
     render() {
       return (
         <Router>
           <Switch>
-            <Route exact path='/' component={Dashboard} />
+            <Route exact path='/' component={Landing} />
+            <Route exact path='/dashboard' component={Dashboard} />
             <Redirect to='/' />
           </Switch>
         </Router>

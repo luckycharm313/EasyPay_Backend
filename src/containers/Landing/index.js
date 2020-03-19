@@ -20,7 +20,7 @@ function Landing({ requestSend }) {
       <div className='row d-flex flex-column align-items-center justify-content-center my-4'>
         <img src={require('../../../public/easypay.png')} alt='logo' className='img-logo'/>
         <h3 className='text-center font-weight-bold mt-3' >Easy Pay Platform</h3>
-        <span className='text-center f-d'>…Making Payment Real Easy</span>
+        <span className='text-center f-d'>Making Payment Real Easy</span>
       </div>
       <div className='row my-5'>
         <div className='col-md-6 my-4 d-flex flex-column justify-content-between py-3'>

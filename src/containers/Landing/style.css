@@ -12,8 +12,20 @@
 .f-d {
     font-size: 15px !important;
 }
+.f-font {
+    font-family: 'futura' !important;
+}
 .line {
     height: 0;
     border-top: 1px solid #FAF8F8;
     width: 100%;
+}
+.txt-ellipsis {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.icon-mobile {
+    width: 20%;
+    border-radius: 6px;
 }

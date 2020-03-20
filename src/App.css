@@ -1,13 +1,20 @@
 /* PAGE */
 @font-face {
-  font-family: 'thebold';
-  src: url('../public/theboldfont.ttf')  format('truetype');
+  font-family: 'exo';
+  src: url('../public/exo.regular.otf');
+}
+
+@font-face {
+  font-family: 'futura';
+  src: url('../public/Futura.ttc');
 }
 html {
+  font-family: 'exo' !important;
   height: 100%;
   margin: 0px;
 }
 body {
+  font-family: 'exo' !important;
   height: 100%;
   margin: 0px;
   -webkit-background-size: cover;
@@ -16,6 +23,7 @@ body {
   background-size: cover;
   background-color: #0B57D1 !important;
   color: #fff !important;
+  
 }
 .btn-main {
   background-color: #469DF4;
@@ -24,6 +32,7 @@ body {
   font-weight: 500;
   padding: 7px 30px;
   border-radius: 5px;
+  border: 2px solid white;
   text-align: center;
   cursor: pointer;
 }

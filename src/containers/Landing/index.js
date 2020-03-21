@@ -43,7 +43,7 @@ function Landing({ requestSend }) {
         <div className='col-md-6 my-4'>
           <img src={require('../../../public/mobile.png')} alt='mobile' className='img-mobile'/>          
         </div>
-        <div className='ml-auto'>
+        <div className='ml-auto col-md-6'>
           <p className='text-center mt-4 mb-0 f-font'>COMING SOON ON ANDROID & APPLE APP STORES</p>
           <div className='d-flex flex-row justify-content-center mt-2'>
             <img src={require('../../../public/iphone.png')} alt='mobile' className='icon-mobile'/>

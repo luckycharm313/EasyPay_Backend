@@ -18,26 +18,33 @@ function Landing({ requestSend }) {
 
   return (      
     <div className='container d-flex flex-column'>
-      <div className='row d-flex flex-column align-items-center justify-content-center my-4'>
-        <img src={require('../../../public/easypay.png')} alt='logo' className='img-logo'/>
+      <div className='row d-flex flex-column align-items-center justify-content-center s-b'>
+        <a href='/' className='p-0 as'>
+          <img src={require('../../../public/easypay.png')} alt='logo' className='img-logo'/>
+        </a>        
         <h3 className='text-center mt-3' >Easy Pay Platform</h3>
-        <span className='text-center f-d'>Making Payment Real Easy</span>
+        <span className='text-center f-d'>...Making Payment Real Easy</span>
       </div>
-      <div className='row my-5'>
-        <div className='col-md-6 my-4 d-flex flex-column justify-content-between py-3'>
-          <div>
+      <div className='row s-t'>
+        <div className='col-md-6 my-4 d-flex flex-column justify-content-end'>
+          <div className=''>
             <p className='text-center'>Easy Pay is a platform that simplifies making and receiving Payments altogether.</p>
             <p className='text-center'>Our system focuses on every day people by bringing back privacy to payments.</p>
             <p className='text-center'>We also enable businesses receive & process payments seamlessly.</p>
           </div>
-          <div className='d-flex flex-row align-items-center' >
-            <input className='form-control f-d txt-ellipsis' placeholder='Enter your number To Request A Demo & Learn More' type='text' value={phone} onChange={(e) => setPhone(e.target.value)} />
-            <button type='button' className='ml-2 btn-main' onClick={onSendHandle}>Request</button>
-          </div>
+          <div className='ps-4 mst-5'>
+            <p className='f-d mb-1'>Enter your number To Request A Demo & Learn More:</p>
+            <div className='d-flex flex-row align-items-center' >
+              <input className='form-control f-d txt-ellipsis' placeholder='Enter your number To Request A Demo & Learn More' type='text' value={phone} onChange={(e) => setPhone(e.target.value)} />
+              <button type='button' className='ml-2 btn-main' onClick={onSendHandle}>Request</button>
+            </div>
+          </div>        
         </div>
         <div className='col-md-6 my-4'>
-          <img src={require('../../../public/mobile.png')} alt='mobile' className='img-mobile'/>
-          <p className='text-center mt-4 mb-0'>COMING SOON ON ANDROID & APPLE APP STORES</p>
+          <img src={require('../../../public/mobile.png')} alt='mobile' className='img-mobile'/>          
+        </div>
+        <div className='ml-auto'>
+          <p className='text-center mt-4 mb-0 f-font'>COMING SOON ON ANDROID & APPLE APP STORES</p>
           <div className='d-flex flex-row justify-content-center mt-2'>
             <img src={require('../../../public/iphone.png')} alt='mobile' className='icon-mobile'/>
             <img src={require('../../../public/android.png')} alt='mobile' className='icon-mobile ml-2'/>
@@ -107,9 +114,12 @@ function Landing({ requestSend }) {
           <p className='text-center f-d'>
           Talk to US! We are easy to approach and we will address your concerns. Email us: Support@easypayplatform.io
           </p>
-          <div className='d-flex flex-row align-items-center mt-5 w-75 mx-auto' >
-            <input className='form-control f-d txt-ellipsis' placeholder='Enter your number To Request A Demo & Learn More' type='text' value={phone} onChange={(e) => setPhone(e.target.value)} />
-            <button type='button' className='ml-2 btn-main' onClick={onSendHandle}>Request</button>
+          <div className='mt-5 ws-75 mx-auto'>
+            <p className='f-d mb-1'>Enter your number To Request A Demo & Learn More:</p>
+            <div className='d-flex flex-row align-items-center' >
+              <input className='form-control f-d txt-ellipsis' placeholder='Enter your number To Request A Demo & Learn More' type='text' value={phone} onChange={(e) => setPhone(e.target.value)} />
+              <button type='button' className='ml-2 btn-main' onClick={onSendHandle}>Request</button>
+            </div>
           </div>
         </div>        
       </div>

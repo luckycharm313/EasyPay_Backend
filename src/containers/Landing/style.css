@@ -26,6 +26,76 @@
     text-overflow: ellipsis;
 }
 .icon-mobile {
-    width: 20%;
+    width: 25%;
+    width: 180px;
+    height: 59.4px;
+    resize: cover;
     border-radius: 6px;
+}
+
+.s-b {
+    margin-bottom: 1.5rem;
+    margin-top: 1.5rem;
+}
+
+.s-t {
+    margin-bottom: 3rem;
+    margin-top: 3rem;
+}
+.ps-4 {
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+}
+.ws-75 {
+    width: 75%;
+}
+.mst-5 {
+    margin-top: 3rem;
+}
+.as:hover {
+    color: unset;
+    background-color: unset !important;
+}
+@media only screen and (max-width: 1200px) {
+    .mst-5 {
+        margin-top: 1.5rem;
+    }
+}
+@media only screen and (max-width: 991px) {
+    .icon-mobile {
+        width: 125px;
+        height: 41.25px;
+    }
+    .img-mobile {
+        height: 100%;
+    }
+    .ps-4 {
+        padding-left: 0;
+        padding-right: 0;
+    }    
+}
+
+@media only screen and (max-width: 768px) {
+    .s-b {
+        margin-bottom: 0px;
+    }
+    .s-t {
+        margin-top: 0px;
+    }
+    .img-mobile {
+        width: 100%;
+    }
+    .ws-75 {
+        width: 100%;
+    }
+    .mst-5 {
+        margin-top: 3rem;
+    }
+}
+
+@media only screen and (max-width: 576px) {
+    .ps-4 {
+        padding-left: 0.7rem;
+        padding-right: 0.7rem;
+    }
 }

@@ -7,7 +7,7 @@ import {
 const startup = (state = defaultState, { type, payload }) => {
   switch (type) {
     case STARTUP_SEND_REQUEST:
-      alert('Sent successfully!');
+      alert('Thanks for your interest in Easy Pay. We will contact you soon.');
       return {
         ...state,
       };

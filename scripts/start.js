@@ -208,7 +208,11 @@ function runDevServer(host, port, protocol) {
   var devServer = new WebpackDevServer(compiler, {
     
     compress: true,
-    
+    headers: {
+      "Access-Control-Allow-Origin": "*",
+      "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, PATCH, OPTIONS",
+      "Access-Control-Allow-Headers": "X-Requested-With, content-type, Authorization"
+    },
     clientLogLevel: 'none',
     
     contentBase: paths.appPublic,

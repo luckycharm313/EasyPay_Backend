@@ -1,20 +1,25 @@
 /* PAGE */
 @font-face {
-  font-family: 'exo';
+  font-family: 'Exo';
   src: url('../public/exo.regular.otf');
 }
 
 @font-face {
-  font-family: 'futura';
+  font-family: 'Time New Roman';
+  src: url('../public/Times\ New\ Roman.ttf');
+}
+
+@font-face {
+  font-family: 'Futura';
   src: url('../public/Futura.ttc');
 }
 html {
-  font-family: 'exo' !important;
+  font-family: 'Time New Roman' !important;
   height: 100%;
   margin: 0px;
 }
 body {
-  font-family: 'exo' !important;
+  font-family: 'Time New Roman' !important;
   height: 100%;
   margin: 0px;
   -webkit-background-size: cover;

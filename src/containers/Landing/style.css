@@ -13,7 +13,10 @@
     font-size: 15px !important;
 }
 .f-font {
-    font-family: 'futura' !important;
+    font-family: 'Futura' !important;
+}
+.e-font {
+    font-family: 'Exo' !important;
 }
 .line {
     height: 0;

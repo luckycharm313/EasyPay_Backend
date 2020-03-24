@@ -20,7 +20,7 @@ async function add (req, res, next) {
 
     if( _employee ) { // update
 
-      let token = jwt.sign({ id: _employee.id, self_id: _employee.self_id }, constants.SECURITY_KEY, { expiresIn: 60 * 60 * 24 * 365 })
+      let token = jwt.sign({ id: _employee.id, self_id: _employee.self_id }, constants.SECURITY_ADMIN_KEY, { expiresIn: 60 * 60 * 24 * 365 })
 
       let _query = 'UPDATE employee SET token = ?, updated_at = ?, biz_name = ?, biz_phone = ?, biz_address = ?, manager_id = ?, manager_pin = ?, tax = ?, password = ? WHERE id = ? ';
       let _values = [ token, updated_at, biz_name, biz_phone, biz_address, manager_id, manager_pin, tax, _password, _employee.id ];
@@ -50,7 +50,7 @@ async function add (req, res, next) {
 
       const _employee_ = await employeeModel.findUserBySelfId(self_id, company_id);
 
-      let token = jwt.sign({ id: _employee_.id, self_id: _employee_.self_id }, constants.SECURITY_KEY, { expiresIn: 60 * 60 * 24 * 365 });
+      let token = jwt.sign({ id: _employee_.id, self_id: _employee_.self_id }, constants.SECURITY_ADMIN_KEY, { expiresIn: 60 * 60 * 24 * 365 });
       
       let _query = 'UPDATE employee SET token = ?, updated_at = ? WHERE id = ? ';
       let _values = [ token, updated_at, _employee_.id ];

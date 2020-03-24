@@ -42,22 +42,26 @@ async function verify (req, res, next) {
 
   try {
     const _user = await userModel.findUserByPhone(phone);
-    if(_user) {
-      let token = jwt.sign({ id: _user.id }, constants.SECURITY_KEY, { expiresIn: 60 * 60 * 24 * 365 })
+    if( _user  ) {
+      if( _user.email ) {
+        let token = jwt.sign({ id: _user.id }, constants.SECURITY_KEY, { expiresIn: 60 * 60 * 24 * 365 })
 
-      let _query = 'UPDATE users SET token = ?, updated_at = ? WHERE phone = ? ';
-      let _values = [ token, updated_at, phone ];
-      
-      let _result = await new Promise(function (resolve, reject) {
-        DB.query(_query, _values, function (err, data) {
-          if (err) reject(err);
-          else resolve(data.affectedRows > 0 ? true : false);
+        let _query = 'UPDATE users SET token = ?, updated_at = ? WHERE phone = ? ';
+        let _values = [ token, updated_at, phone ];
+        
+        let _result = await new Promise(function (resolve, reject) {
+          DB.query(_query, _values, function (err, data) {
+            if (err) reject(err);
+            else resolve(data.affectedRows > 0 ? true : false);
+          })
         })
-      })
-
-      if (!_result) return common.send(res, 300, '', 'Database error');
-
-      return common.send(res, 200, token, 'Success');
+  
+        if (!_result) return common.send(res, 300, '', 'Database error');
+  
+        return common.send(res, 200, token, 'Success');
+      } else {
+        return common.send(res, 200, null, 'Success');
+      }      
 
     } else {
       let _query = 'INSERT INTO users ( phone, user_type, created_at, updated_at) VALUES (?, ?, ?, ?)';
@@ -82,9 +86,8 @@ async function verify (req, res, next) {
 
 async function addUserInfo (req, res, next) {
   var params = req.body;
-  const { phone, email, zip_code, stripe_token } = params;
+  const { phone, email, zip_code, card } = params;
   
-  var created_at = moment(new Date()).format('YYYY-MM-DD hh:mm:ss');
   var updated_at = moment(new Date()).format('YYYY-MM-DD hh:mm:ss');
 
   try {
@@ -93,8 +96,8 @@ async function addUserInfo (req, res, next) {
     
     let token = jwt.sign({ id: _user.id }, constants.SECURITY_KEY, { expiresIn: 60 * 60 * 24 * 365 })
 
-    let _query = 'UPDATE users SET token = ?, email = ?, zip_code = ?, stripe_token = ?,  updated_at = ? WHERE phone = ? ';
-    let _values = [ token, email, zip_code, JSON.stringify(stripe_token), updated_at, phone ];
+    let _query = 'UPDATE users SET token = ?, email = ?, zip_code = ?, card_number = ?, card_cvc = ?, card_exp_month = ?, card_exp_year = ?,  updated_at = ? WHERE phone = ? ';
+    let _values = [ token, email, zip_code, card.number, card.cvc, card.expMonth, card.expYear, updated_at, phone ];
     
     let _result = await new Promise(function (resolve, reject) {
       DB.query(_query, _values, function (err, data) {

@@ -261,7 +261,7 @@ function run(port) {
   var protocol = process.env.HTTPS === 'true' ? "https" : "http";
   var host = process.env.HOST || 'localhost';
   setupCompiler(host, port, protocol);
-  runDevServer(host, port, protocol);
+  // runDevServer(host, port, protocol);
 }
 
 detect(DEFAULT_PORT).then(port => {

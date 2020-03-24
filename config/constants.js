@@ -8,7 +8,9 @@ module.exports = {
   DB_PASS: '',
   DB_NAME: 'easypay',
   SECURITY_KEY : "easypay2020@copyright",
+  SECURITY_ADMIN_KEY : "easypayAdmin2020@copyright",
   TWILIO_ACCOUNT_SID : "AC3f1fd37a820788aceefcdb885f195450",
   TWILIO_AUTH_TOKEN : "4aee2b12832764c33ce4406f9474d985",
+  STRIPE_SECURITY_KEY : "sk_test_LuVEGvRPd8xW95npCAz3fi1s00H5YRIJYT",
   FROM_NUMBER : "+1 323 375 0076",
 }

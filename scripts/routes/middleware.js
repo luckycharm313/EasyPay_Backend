@@ -20,7 +20,7 @@ function auth(req, res, next) {
 function admin(req, res, next) {
   if( req.headers['token'] === undefined || req.headers['token'] === '') return common.send(res, 300, '', 'There is no authenticate token.');
   
-  jwt.verify(req.headers['token'], constants.SECURITY_KEY, function(err, decoded) {
+  jwt.verify(req.headers['token'], constants.SECURITY_ADMIN_KEY, function(err, decoded) {
     if( err ) {
       return common.send(res, 300, '', 'There is no authenticate token.');      
     } else {

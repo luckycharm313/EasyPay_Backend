@@ -78,15 +78,13 @@ async function pay (req, res, next) {
         cvc: _user.card_cvc,
       },
     })
-    console.log({stripe_token})
 
     var charge = await stripe.charges.create({
-      amount: amount * 100,
+      amount: Math.ceil(amount * 100),
       currency: 'usd',
       source: stripe_token.id,
     })
 
-    console.log(charge)
     if ( charge ) {
       if( Object.keys(sub_receipts).length > 0 ) {
         let _query = 'UPDATE sub_receipts SET user_id = ?, tip= ?, status = ?, paid_date = ? WHERE id = ? AND parent_receipt_id = ? ';

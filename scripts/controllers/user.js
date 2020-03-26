@@ -114,6 +114,7 @@ async function addUserInfo (req, res, next) {
     return common.send(res, 400, '', 'Exception error: ' + err);
   }
 }
+
 async function getInfo (req, res, next) {
   var user_id = res.locals.user_id;
   try {
@@ -152,10 +153,60 @@ async function setRate (req, res, next) {
     return common.send(res, 400, '', 'Exception error: ' + err);
   }
 }
+
+async function addOneUser (req, res, next) {
+  var params = req.body;
+  const { email, zip_code, card } = params;
+  
+  var created_at = moment(new Date()).format('YYYY-MM-DD hh:mm:ss');
+  var updated_at = moment(new Date()).format('YYYY-MM-DD hh:mm:ss');
+
+  try {
+    const _user = await userModel.findUserByEmail(email);
+    if(_user) {
+      
+      let _query = 'UPDATE users SET zip_code = ?, card_number = ?, card_cvc = ?, card_exp_month = ?, card_exp_year = ?,  updated_at = ? WHERE email = ? ';
+      let _values = [ zip_code, card.number, card.cvc, card.expMonth, card.expYear, updated_at, email ];
+      
+      let _result = await new Promise(function (resolve, reject) {
+        DB.query(_query, _values, function (err, data) {
+          if (err) reject(err);
+          else resolve(data.affectedRows > 0 ? true : false);
+        })
+      })
+  
+      if (!_result) return common.send(res, 300, '', 'Database error');
+      
+      return common.send(res, 200, _user.id, 'Success');
+
+    } else {
+      let _query = 'INSERT INTO users ( email, zip_code, card_number, card_cvc, card_exp_month, card_exp_year, user_type, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)';
+      let _values = [ email, zip_code, card.number, card.cvc, card.expMonth, card.expYear, 0, created_at, updated_at];
+      
+      let user_id = await new Promise(function (resolve, reject) {
+        DB.query(_query, _values, function (err, data) {
+          if (err) reject(err);
+          else resolve(data.affectedRows > 0 ? data.insertId : false);
+        })
+      })
+
+      if (!user_id) return common.send(res, 300, '', 'Database error');
+      
+      return common.send(res, 200, user_id, 'Success');
+    }
+
+  } catch (err) {
+    return common.send(res, 400, '', 'Exception error: ' + err);
+  }
+}
+
 module.exports = {
   phone,
   verify,
   addUserInfo,
   getInfo,
-  setRate
+  setRate,
+
+  // one time payment
+  addOneUser,
 }

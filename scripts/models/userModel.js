@@ -26,4 +26,16 @@ module.exports = {
       })
     });
   },
+  findUserByEmail: function ( email ) {
+
+    var query = 'SELECT * FROM users WHERE email = ?';
+    var values = [email];
+    
+    return new Promise(function (resolve, reject) {
+      DB.query(query, values, function (err, data) {
+        if (err) reject(err);
+        else resolve(data.length > 0 ? data [0] : null);
+      })
+    });
+  },
 }

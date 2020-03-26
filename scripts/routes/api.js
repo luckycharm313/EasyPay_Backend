@@ -12,5 +12,6 @@ router.get('/user/get', middleware.auth, user.getInfo);
 router.post('/user/setRate', middleware.auth, user.setRate);
 router.post('/receipt/get', middleware.auth, receipt.get);
 router.post('/receipt/pay', middleware.auth, receipt.pay);
+router.post('/receipt/load', middleware.auth, receipt.loadHistory);
 
 module.exports = router;

@@ -54,14 +54,15 @@ async function pay (req, res, next) {
   var params = req.body;
   const { receiptInfo, tip, percent } = params;
 
-  var created_at = moment(new Date()).format('YYYY-MM-DD hh:mm:ss');
-
+  // var created_at = moment(new Date()).format('YYYY-MM-DD hh:mm:ss');
+  var created_at = Math.ceil( new Date().getTime() / 1000 );
+  
   try {
     const _user = await userModel.findUserById(user_id);
     if(!_user) return common.send(res, 300, '', 'User not found');
 
-    var receipt = receiptInfo.receipt;
-    var sub_receipts = receiptInfo.sub_receipts;
+    let receipt = receiptInfo.receipt;
+    let sub_receipts = receiptInfo.sub_receipts;
     var amount = 0;
     
     if( Object.keys(sub_receipts).length > 0 ) {
@@ -125,11 +126,57 @@ async function pay (req, res, next) {
       return common.send(res, 200, payload, 'Success');
     }
   } catch (err) {
+    // save the data when decline the payment
+    let receipt = receiptInfo.receipt;
+    let sub_receipts = receiptInfo.sub_receipts;
+
+    if( Object.keys(sub_receipts).length > 0 ) {
+      let _query = 'UPDATE sub_receipts SET user_id = ?, tip= ?, status = ?, paid_date = ? WHERE id = ? AND parent_receipt_id = ? ';
+      let _values = [ user_id, tip, 2, created_at, sub_receipts.id, receipt.id ];
+      let _result = await new Promise(function (resolve, reject) {
+        DB.query(_query, _values, function (err, data) {
+          if (err) reject(err);
+          else resolve(data.affectedRows > 0 ? true : false);
+        })
+      })
+      if(!_result) return common.send(res, 300, '', 'Database Error');
+    } else {
+      let _query = 'UPDATE receipts SET user_id = ?, tip= ?, status = ?, paid_date = ? WHERE id = ? ';
+      let _values = [ user_id, tip, 2, created_at, receipt.id ];
+      let _result = await new Promise(function (resolve, reject) {
+        DB.query(_query, _values, function (err, data) {
+          if (err) reject(err);
+          else resolve(data.affectedRows > 0 ? true : false);
+        })
+      })
+      if(!_result) return common.send(res, 300, '', 'Database Error');
+    }
+    
+    return common.send(res, 400, '', 'Exception error: ' + err);
+  }
+}
+
+async function loadHistory (req, res, next) {
+  var user_id = res.locals.user_id;
+    
+  var params = req.body;
+  const { limit } = params;
+  console.log(user_id)
+  console.log(limit)
+  try {
+    
+    const _receipt = await receiptModel.getHistoryByLimit( user_id, limit );
+    if(!_receipt) return common.send(res, 300, '', 'Receipt not found');
+
+    return common.send(res, 200, _receipt, 'Success');
+
+  } catch (err) {
     return common.send(res, 400, '', 'Exception error: ' + err);
   }
 }
 
 module.exports = {
   get,
-  pay
+  pay,
+  loadHistory
 }

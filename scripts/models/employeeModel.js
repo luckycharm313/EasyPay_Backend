@@ -26,4 +26,16 @@ module.exports = {
       })
     });
   },
+  findManagerById: function ( manager_id, manager_pin, id ) {
+
+    var query = 'SELECT * FROM employee WHERE manager_id =? AND manager_pin = ? AND id = ?';
+    var values = [manager_id, manager_pin, id];
+    
+    return new Promise(function (resolve, reject) {
+      DB.query(query, values, function (err, data) {
+        if (err) reject(err);
+        else resolve(data.length > 0 ? data [0] : null);
+      })
+    });
+  },
 }

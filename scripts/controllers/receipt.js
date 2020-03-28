@@ -88,8 +88,8 @@ async function pay (req, res, next) {
 
     if ( charge ) {
       if( Object.keys(sub_receipts).length > 0 ) {
-        let _query = 'UPDATE sub_receipts SET user_id = ?, tip= ?, status = ?, paid_date = ? WHERE id = ? AND parent_receipt_id = ? ';
-        let _values = [ user_id, tip, 1, created_at, sub_receipts.id, receipt.id ];
+        let _query = 'UPDATE sub_receipts SET user_id = ?, tip= ?, status = ?, transaction_id = ?, paid_date = ? WHERE id = ? AND parent_receipt_id = ? ';
+        let _values = [ user_id, tip, 1, charge.id, created_at, sub_receipts.id, receipt.id ];
         let _result = await new Promise(function (resolve, reject) {
           DB.query(_query, _values, function (err, data) {
             if (err) reject(err);
@@ -98,8 +98,8 @@ async function pay (req, res, next) {
         })
         if(!_result) return common.send(res, 300, '', 'Database Error');
       } else {
-        let _query = 'UPDATE receipts SET user_id = ?, tip= ?, status = ?, paid_date = ? WHERE id = ? ';
-        let _values = [ user_id, tip, 1, created_at, receipt.id ];
+        let _query = 'UPDATE receipts SET user_id = ?, tip= ?, status = ?, transaction_id = ?, paid_date = ? WHERE id = ? ';
+        let _values = [ user_id, tip, 1, charge.id, created_at, receipt.id ];
         let _result = await new Promise(function (resolve, reject) {
           DB.query(_query, _values, function (err, data) {
             if (err) reject(err);
@@ -214,8 +214,8 @@ async function payOne (req, res, next) {
 
     if ( charge ) {
       if( Object.keys(sub_receipts).length > 0 ) {
-        let _query = 'UPDATE sub_receipts SET user_id = ?, tip= ?, status = ?, paid_date = ? WHERE id = ? AND parent_receipt_id = ? ';
-        let _values = [ user_id, tip, 1, created_at, sub_receipts.id, receipt.id ];
+        let _query = 'UPDATE sub_receipts SET user_id = ?, tip= ?, status = ?, transaction_id = ?, paid_date = ? WHERE id = ? AND parent_receipt_id = ? ';
+        let _values = [ user_id, tip, 1, charge.id, created_at, sub_receipts.id, receipt.id ];
         let _result = await new Promise(function (resolve, reject) {
           DB.query(_query, _values, function (err, data) {
             if (err) reject(err);
@@ -224,8 +224,8 @@ async function payOne (req, res, next) {
         })
         if(!_result) return common.send(res, 300, '', 'Database Error');
       } else {
-        let _query = 'UPDATE receipts SET user_id = ?, tip= ?, status = ?, paid_date = ? WHERE id = ? ';
-        let _values = [ user_id, tip, 1, created_at, receipt.id ];
+        let _query = 'UPDATE receipts SET user_id = ?, tip= ?, status = ?, transaction_id = ?, paid_date = ? WHERE id = ? ';
+        let _values = [ user_id, tip, 1, charge.id, created_at, receipt.id ];
         let _result = await new Promise(function (resolve, reject) {
           DB.query(_query, _values, function (err, data) {
             if (err) reject(err);

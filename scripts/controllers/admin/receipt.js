@@ -8,6 +8,8 @@ var orderModel = require('../../models/orderModel')
 var receiptModel = require('../../models/receiptModel')
 var subReceiptModel = require('../../models/subReceiptModel')
 
+const stripe = require('stripe')(constants.STRIPE_SECURITY_KEY);
+
 async function orders (req, res, next) {
   var employee_id = res.locals.employee_id;
 
@@ -172,8 +174,115 @@ async function split (req, res, next) {
   }
 }
 
+async function loadHistory (req, res, next) {
+  var employee_id = res.locals.employee_id;
+    
+  var params = req.body;
+  const { limit } = params;
+  
+  try {
+    
+    const _receipt = await receiptModel.getAdminHistoryByLimit( employee_id, limit );
+    if(!_receipt) return common.send(res, 300, '', 'Receipt not found');
+
+    return common.send(res, 200, _receipt, 'Success');
+
+  } catch (err) {
+    return common.send(res, 400, '', 'Exception error: ' + err);
+  }
+}
+
+async function search (req, res, next) {
+  var employee_id = res.locals.employee_id;
+    
+  var params = req.body;
+  const { search, limit } = params;
+  
+  try {
+    
+    const _receipt = await receiptModel.getSearchByLimit( employee_id, search, limit );
+    if(!_receipt) return common.send(res, 300, '', 'Receipt not found');
+
+    return common.send(res, 200, _receipt, 'Success');
+
+  } catch (err) {
+    return common.send(res, 400, '', 'Exception error: ' + err);
+  }
+}
+
+async function refund (req, res, next) {
+  var employee_id = res.locals.employee_id;
+    
+  var params = req.body;
+  const { receipt_id, refund_amount, manager_id, pin } = params;
+  var refund_at = Math.ceil( new Date().getTime() / 1000 );
+  
+  try {
+    
+    const _manager = await employeeModel.findManagerById( manager_id, pin, employee_id );
+    if(!_manager) return common.send(res, 300, '', 'Invalid Manager');
+
+    var charge_id = ''
+    if(receipt_id.toString().search('-') > -1) {
+      var temp = receipt_id.toString().split('-');
+      let  r_id = temp[1]
+
+      let sub_receipts = await subReceiptModel.findBillByReceiptIdAndSubId(receipt_id, r_id);
+      if(!sub_receipts) return common.send(res, 300, '', 'Receipt not found');
+
+      charge_id = sub_receipts.transaction_id
+
+    } else {
+      const _receipt = await receiptModel.findReceiptById(receipt_id);
+      if(!_receipt) return common.send(res, 300, '', 'Receipt not found');
+      charge_id = _receipt.transaction_id
+    }
+    
+
+    const _refund = await stripe.refunds.create({
+      amount: Math.ceil(refund_amount * 100),
+      charge: charge_id,
+    });
+
+    if(_refund) {
+      if(receipt_id.toString().search('-') > -1) {
+        let _temp = receipt_id.toString().split('-');
+        let  _r_id = _temp[1]
+        let _query = 'UPDATE sub_receipts SET refund_amount = ?, is_refund= ?, refund_at = ? WHERE id = ? AND parent_receipt_id = ?';
+        let _values = [ refund_amount, 1, refund_at, _r_id, receipt_id ];
+        let _result = await new Promise(function (resolve, reject) {
+          DB.query(_query, _values, function (err, data) {
+            if (err) reject(err);
+            else resolve(data.affectedRows > 0 ? true : false);
+          })
+        })
+        if(!_result) return common.send(res, 300, '', 'Database Error');
+
+      } else {
+        let _query = 'UPDATE receipts SET refund_amount = ?, is_refund= ?, refund_at = ? WHERE id = ? ';
+        let _values = [ refund_amount, 1, refund_at, receipt_id ];
+        let _result = await new Promise(function (resolve, reject) {
+          DB.query(_query, _values, function (err, data) {
+            if (err) reject(err);
+            else resolve(data.affectedRows > 0 ? true : false);
+          })
+        })
+        if(!_result) return common.send(res, 300, '', 'Database Error');
+
+      }
+      return common.send(res, 200, true, 'Success');
+    }
+
+  } catch (err) {
+    return common.send(res, 400, '', 'Exception error: ' + err);
+  }
+}
+
 module.exports = {
   orders,
   get,
-  split
+  split,
+  loadHistory,
+  search,
+  refund
 }

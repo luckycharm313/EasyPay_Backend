@@ -9,5 +9,8 @@ router.post('/employee/add', employee.add);
 router.post('/receipt/orders', middleware.admin, receipt.orders);
 router.post('/receipt/get', middleware.admin, receipt.get);
 router.post('/receipt/split', middleware.admin, receipt.split);
+router.post('/receipt/load', middleware.admin, receipt.loadHistory);
+router.post('/receipt/search', middleware.admin, receipt.search);
+router.post('/receipt/refund', middleware.admin, receipt.refund);
 
 module.exports = router;

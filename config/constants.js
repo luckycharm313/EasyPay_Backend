@@ -13,4 +13,9 @@ module.exports = {
   TWILIO_AUTH_TOKEN : "4aee2b12832764c33ce4406f9474d985",
   STRIPE_SECURITY_KEY : "sk_test_LuVEGvRPd8xW95npCAz3fi1s00H5YRIJYT",
   FROM_NUMBER : "+1 323 375 0076",
+
+  PP_CLIENT_ID : "AScQerRm6bLnT9imowrXuKTq_yo8Pyh6WcopyGC3mtU-oAk6kGhDl3uzKR-BO_aqoKEwp9lFpqmZ9rkE",
+  PP_CLIENT_SECRET : "EF3K_TaQDuYEmDeBDvzhUFLksAzAooq3jcEIR628Y1JSl2qnjtTOp8tGEzfQFdATzAwre134eoO5fITL",
+  PP_URL : "https://api.sandbox.paypal.com/v1/oauth2/token",
+  // PP_BASE_URL : "https://api.paypal.com",
 }

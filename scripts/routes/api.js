@@ -17,5 +17,6 @@ router.post('/receipt/load', middleware.auth, receipt.loadHistory);
 // one time payment
 router.post('/user/addOneUser', user.addOneUser);
 router.post('/receipt/payOne', receipt.payOne);
+router.post('/user/getOne', user.getOne);
 
 module.exports = router;

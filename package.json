@@ -50,7 +50,9 @@
     "@fortawesome/free-brands-svg-icons": "^5.11.2",
     "@fortawesome/free-solid-svg-icons": "^5.11.2",
     "@fortawesome/react-fontawesome": "^0.1.7",
+    "axios": "^0.19.2",
     "bootstrap": "^4.3.1",
+    "braintree": "^2.22.0",
     "cookie-parser": "^1.4.4",
     "dotenv": "^2.0.0",
     "fs": "^0.0.1-security",
@@ -77,6 +79,7 @@
     "redux": "^4.0.1",
     "redux-persist": "^6.0.0",
     "redux-thunk": "^2.3.0",
+    "request": "^2.88.2",
     "stripe": "^8.33.0",
     "twilio": "^3.40.0"
   },

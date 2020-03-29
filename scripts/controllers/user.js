@@ -6,6 +6,8 @@ var Promise = require('promise');
 var DB = require('../../config/database');
 var constants = require('../../config/constants');
 var userModel = require('../models/userModel')
+var request = require('request')
+var braintree = require('braintree')
 
 var twilioClient = require('twilio')(constants.TWILIO_ACCOUNT_SID, constants.TWILIO_AUTH_TOKEN)
 
@@ -163,38 +165,133 @@ async function addOneUser (req, res, next) {
 
   try {
     const _user = await userModel.findUserByEmail(email);
-    if(_user) {
+    
+    if( card === null ) { //paypal
       
-      let _query = 'UPDATE users SET zip_code = ?, card_number = ?, card_cvc = ?, card_exp_month = ?, card_exp_year = ?,  updated_at = ? WHERE email = ? ';
-      let _values = [ zip_code, card.number, card.cvc, card.expMonth, card.expYear, updated_at, email ];
+      // var _pp = await axios.request({
+      //   url: constants.PP_URL,
+      //   method: "post",
+      //   headers: {
+      //     'content-type': 'application/x-www-form-urlencoded'          
+      //   },
+      //   auth: {
+      //     username: constants.PP_CLIENT_ID,
+      //     password: constants.PP_CLIENT_SECRET
+      //   },
+      //   data: {
+      //     "grant_type": "client_credentials"  
+      //   }
+      // })
+
+      request.post({
+        uri: constants.PP_URL,
+        headers: {
+            "Accept": "application/json",
+            "Accept-Language": "en_US",
+            "content-type": "application/x-www-form-urlencoded"
+        },
+        auth: {
+        'user': constants.PP_CLIENT_ID,
+        'pass': constants.PP_CLIENT_SECRET
+        },
+        form: {
+          "grant_type": "client_credentials"
+        }
+      }, function(error, response, body) {
+        var pp = JSON.parse(body)
+        var _access_token = pp.access_token;
+        console.log(_access_token)
+        var gateway = braintree.connect({
+          accessToken: _access_token
+        });
+        console.log(gateway)
+        // gateway.clientToken.generate({}, async function (err, response) {
+        //   console.log(response)
+        //   if(!err) {
+        //     var access_token = response.clientToken
+        //     if(_user) {
       
-      let _result = await new Promise(function (resolve, reject) {
-        DB.query(_query, _values, function (err, data) {
-          if (err) reject(err);
-          else resolve(data.affectedRows > 0 ? true : false);
-        })
+        //       let _query = 'UPDATE users SET zip_code = ?, paypal = ?,  updated_at = ? WHERE email = ? ';
+        //       let _values = [ zip_code, access_token, updated_at, email ];
+              
+        //       let _result = await new Promise(function (resolve, reject) {
+        //         DB.query(_query, _values, function (err, data) {
+        //           if (err) reject(err);
+        //           else resolve(data.affectedRows > 0 ? true : false);
+        //         })
+        //       })
+          
+        //       if (!_result) return common.send(res, 300, '', 'Database error');
+              
+        //       return common.send(res, 200, _user.id, 'Success');
+        
+        //     } else {
+        //       let _query = 'INSERT INTO users ( email, zip_code, paypal, user_type, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?)';
+        //       let _values = [ email, zip_code, access_token, 0, created_at, updated_at];
+              
+        //       let user_id = await new Promise(function (resolve, reject) {
+        //         DB.query(_query, _values, function (err, data) {
+        //           if (err) reject(err);
+        //           else resolve(data.affectedRows > 0 ? data.insertId : false);
+        //         })
+        //       })
+        
+        //       if (!user_id) return common.send(res, 300, '', 'Database error');
+              
+        //       return common.send(res, 200, user_id, 'Success');
+        //     }
+        //   }
+        // });
       })
+    
+    } else { // card
+
+      if(_user) {
+      
+        let _query = 'UPDATE users SET zip_code = ?, card_number = ?, card_cvc = ?, card_exp_month = ?, card_exp_year = ?,  updated_at = ? WHERE email = ? ';
+        let _values = [ zip_code, card.number, card.cvc, card.expMonth, card.expYear, updated_at, email ];
+        
+        let _result = await new Promise(function (resolve, reject) {
+          DB.query(_query, _values, function (err, data) {
+            if (err) reject(err);
+            else resolve(data.affectedRows > 0 ? true : false);
+          })
+        })
+    
+        if (!_result) return common.send(res, 300, '', 'Database error');
+        
+        return common.send(res, 200, _user.id, 'Success');
   
-      if (!_result) return common.send(res, 300, '', 'Database error');
-      
-      return common.send(res, 200, _user.id, 'Success');
-
-    } else {
-      let _query = 'INSERT INTO users ( email, zip_code, card_number, card_cvc, card_exp_month, card_exp_year, user_type, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)';
-      let _values = [ email, zip_code, card.number, card.cvc, card.expMonth, card.expYear, 0, created_at, updated_at];
-      
-      let user_id = await new Promise(function (resolve, reject) {
-        DB.query(_query, _values, function (err, data) {
-          if (err) reject(err);
-          else resolve(data.affectedRows > 0 ? data.insertId : false);
+      } else {
+        let _query = 'INSERT INTO users ( email, zip_code, card_number, card_cvc, card_exp_month, card_exp_year, user_type, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)';
+        let _values = [ email, zip_code, card.number, card.cvc, card.expMonth, card.expYear, 0, created_at, updated_at];
+        
+        let user_id = await new Promise(function (resolve, reject) {
+          DB.query(_query, _values, function (err, data) {
+            if (err) reject(err);
+            else resolve(data.affectedRows > 0 ? data.insertId : false);
+          })
         })
-      })
+  
+        if (!user_id) return common.send(res, 300, '', 'Database error');
+        
+        return common.send(res, 200, user_id, 'Success');
+      }
+    }   
 
-      if (!user_id) return common.send(res, 300, '', 'Database error');
-      
-      return common.send(res, 200, user_id, 'Success');
-    }
+  } catch (err) {
+    return common.send(res, 400, '', 'Exception error: ' + err);
+  }
+}
 
+
+async function getOne (req, res, next) {
+  var params = req.body;
+  const { user_id } = params;
+  try {
+    const _user = await userModel.findUserById(user_id);
+    if(!_user) return common.send(res, 300, '', 'User not found');
+    return common.send(res, 200, _user, 'Success');
   } catch (err) {
     return common.send(res, 400, '', 'Exception error: ' + err);
   }
@@ -209,4 +306,5 @@ module.exports = {
 
   // one time payment
   addOneUser,
+  getOne
 }

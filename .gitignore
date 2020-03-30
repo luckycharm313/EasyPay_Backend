@@ -1,6 +1,0 @@
-node_modules
-build
-npm-debug.log*
-.npm
-build_webpack
-.vscode

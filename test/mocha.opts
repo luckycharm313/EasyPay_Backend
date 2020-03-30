@@ -1,0 +1,4 @@
+--require ./test/test-dom.js
+--require @babel/register
+--recursive
+--colors

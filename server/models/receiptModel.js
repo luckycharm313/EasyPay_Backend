@@ -37,7 +37,7 @@ module.exports = {
       DB.query(query, values, function (err, data) {
         if (err) reject(err);
         else{
-          resolve(data.length > 0 ? data : null);
+          resolve(data.length > 0 ? data : []);
         } 
       })
     });
@@ -59,7 +59,7 @@ module.exports = {
       DB.query(query, values, function (err, data) {
         if (err) reject(err);
         else{
-          resolve(data.length > 0 ? data : null);
+          resolve(data.length > 0 ? data : []);
         } 
       })
     });
@@ -82,7 +82,7 @@ module.exports = {
       DB.query(query, values, function (err, data) {
         if (err) reject(err);
         else{
-          resolve(data.length > 0 ? data : null);
+          resolve(data.length > 0 ? data : []);
         } 
       })
     });

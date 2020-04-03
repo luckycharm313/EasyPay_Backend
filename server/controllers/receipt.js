@@ -164,8 +164,6 @@ async function loadHistory (req, res, next) {
   try {
     
     const _receipt = await receiptModel.getHistoryByLimit( user_id, limit );
-    if(!_receipt) return common.send(res, 300, '', 'Receipt not found');
-
     return common.send(res, 200, _receipt, 'Success');
 
   } catch (err) {

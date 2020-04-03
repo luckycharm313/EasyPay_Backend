@@ -183,8 +183,6 @@ async function loadHistory (req, res, next) {
   try {
     
     const _receipt = await receiptModel.getAdminHistoryByLimit( employee_id, limit );
-    if(!_receipt) return common.send(res, 300, '', 'Receipt not found');
-
     return common.send(res, 200, _receipt, 'Success');
 
   } catch (err) {
@@ -201,8 +199,6 @@ async function search (req, res, next) {
   try {
     
     const _receipt = await receiptModel.getSearchByLimit( employee_id, search, limit );
-    if(!_receipt) return common.send(res, 300, '', 'Receipt not found');
-
     return common.send(res, 200, _receipt, 'Success');
 
   } catch (err) {

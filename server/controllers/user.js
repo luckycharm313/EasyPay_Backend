@@ -13,7 +13,21 @@ var twilioClient = require('twilio')(constants.TWILIO_ACCOUNT_SID, constants.TWI
 
 async function phone (req, res, next) {
   var params = req.body;
-  const { phone } = params;
+  const { phone, iType } = params;
+  
+  try {
+    const _user = await userModel.findUserByPhone(phone);
+
+    if( iType == 0 ) { // signup
+      if( _user ) return common.send(res, 300, '', 'You’re already signed up, please go to sign in.');
+    } else { // sign in
+      if( !_user ) return common.send(res, 301, '', 'We couldn’t find you, please signup.');
+    }
+    
+  } catch (error) {
+    return common.send(res, 400, '', 'Exception error: ' + error);
+  }
+  
   let code = phoneNumberToken(4);
 
   twilioClient.messages
@@ -31,7 +45,7 @@ async function phone (req, res, next) {
     })
     .catch(err => {
       console.log('sms err', err)
-      return common.send(res, 300, '', 'Sending SMS failed : ' + err);
+      return common.send(res, 400, '', 'Sending SMS failed : ' + err);
     });
 }
 
@@ -49,7 +63,7 @@ async function verify (req, res, next) {
         let token = jwt.sign({ id: _user.id }, constants.SECURITY_KEY, { expiresIn: 60 * 60 * 24 * 365 })
 
         let _query = 'UPDATE users SET token = ?, updated_at = ? WHERE phone = ? ';
-        let _values = [ token, updated_at, phone ];
+        let _values = [ token, updated_at, phone.replace(/\s/g, '') ];
         
         let _result = await new Promise(function (resolve, reject) {
           DB.query(_query, _values, function (err, data) {
@@ -67,7 +81,7 @@ async function verify (req, res, next) {
 
     } else {
       let _query = 'INSERT INTO users ( phone, user_type, created_at, updated_at) VALUES (?, ?, ?, ?)';
-      let _values = [ phone, 1, created_at, updated_at];
+      let _values = [ phone.replace(/\s/g, ''), 1, created_at, updated_at];
       
       let _result = await new Promise(function (resolve, reject) {
         DB.query(_query, _values, function (err, data) {
@@ -99,7 +113,7 @@ async function addUserInfo (req, res, next) {
     let token = jwt.sign({ id: _user.id }, constants.SECURITY_KEY, { expiresIn: 60 * 60 * 24 * 365 })
 
     let _query = 'UPDATE users SET token = ?, email = ?, zip_code = ?, card_number = ?, card_cvc = ?, card_exp_month = ?, card_exp_year = ?,  updated_at = ? WHERE phone = ? ';
-    let _values = [ token, email, zip_code, card.number, card.cvc, card.expMonth, card.expYear, updated_at, phone ];
+    let _values = [ token, email, zip_code, card.number, card.cvc, card.expMonth, card.expYear, updated_at, phone.replace(/\s/g, '') ];
     
     let _result = await new Promise(function (resolve, reject) {
       DB.query(_query, _values, function (err, data) {

@@ -7,7 +7,7 @@ import configureStore from './redux/store/configure-store';
 
 // Require globals
 import 'bootstrap/dist/css/bootstrap.css'
-import './css/app.css';
+import './css/App.css';
 
 import './assets/favicon.ico';
 

@@ -170,6 +170,39 @@ async function setRate (req, res, next) {
   }
 }
 
+async function updateCard (req, res, next) {
+  var user_id = res.locals.user_id;
+  var params = req.body;
+  const { email, zip_code, card } = params;
+  
+  var updated_at = moment(new Date()).format('YYYY-MM-DD hh:mm:ss');
+
+  try {
+    
+    const _user = await userModel.findUserById(user_id);
+    if(!_user) return common.send(res, 300, '', 'User not found');
+
+    let _query = 'UPDATE users SET email = ?, zip_code = ?, card_number = ?, card_cvc = ?, card_exp_month = ?, card_exp_year = ?,  updated_at = ? WHERE id = ? ';
+    let _values = [ email, zip_code, card.number, card.cvc, card.expMonth, card.expYear, updated_at, user_id ];
+    
+    let _result = await new Promise(function (resolve, reject) {
+      DB.query(_query, _values, function (err, data) {
+        if (err) reject(err);
+        else resolve(data.affectedRows > 0 ? true : false);
+      })
+    })
+
+    if (!_result) return common.send(res, 300, '', 'Database error');
+    
+    const _user_ = await userModel.findUserById(user_id);
+    if(!_user_) return common.send(res, 300, '', 'User not found');
+
+    return common.send(res, 200, _user_, 'Success');
+  } catch (err) {
+    return common.send(res, 400, '', 'Exception error: ' + err);
+  }
+}
+
 async function addOneUser (req, res, next) {
   var params = req.body;
   const { email, zip_code, card } = params;
@@ -317,6 +350,7 @@ module.exports = {
   addUserInfo,
   getInfo,
   setRate,
+  updateCard,
 
   // one time payment
   addOneUser,

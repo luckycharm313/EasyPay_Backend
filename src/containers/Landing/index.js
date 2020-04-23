@@ -23,7 +23,7 @@ function Landing({ requestSend }) {
           <img src={require('../../assets/easypay.png')} alt='logo' className='img-logo'/>
         </a>        
         <h3 className='text-center mt-3 e-font' >Easy Pay Platform</h3>
-        <span className='text-center f-d e-font'>...Making Payment Real Easy</span>
+        <span className='text-center f-d e-font'>Making Payment Real Easy</span>
       </div>
       <div className='row s-t'>
         <div className='col-md-6 my-4 d-flex flex-column justify-content-end'>

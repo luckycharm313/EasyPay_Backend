@@ -12,5 +12,6 @@ router.post('/receipt/split', middleware.admin, receipt.split);
 router.post('/receipt/load', middleware.admin, receipt.loadHistory);
 router.post('/receipt/search', middleware.admin, receipt.search);
 router.post('/receipt/refund', middleware.admin, receipt.refund);
-
+router.post('/receipt/cancel', middleware.admin, receipt.cancelTransaction);
+router.post('/receipt/accept', middleware.admin, receipt.accept);
 module.exports = router;

@@ -274,11 +274,82 @@ async function refund (req, res, next) {
   }
 }
 
+
+
+async function cancelTransaction (req, res, next) {
+  var employee_id = res.locals.employee_id;
+    
+  var params = req.body;
+  const { isHasSub, id, limit } = params;
+  try {
+    let _query = '';
+    if( isHasSub === 1 ) {
+      _query = 'UPDATE sub_receipts SET status = ? WHERE id = ?';
+      
+    } else {
+      _query = 'UPDATE receipts SET status = ? WHERE id = ? ';      
+    }
+
+    let _values = [ 3, id ];
+    let _result = await new Promise(function (resolve, reject) {
+      DB.query(_query, _values, function (err, data) {
+        if (err) reject(err);
+        else resolve(data.affectedRows > 0 ? true : false);
+      })
+    })
+    if(!_result) return common.send(res, 300, '', 'Database Error');
+
+    const _receipt = await receiptModel.getAdminHistoryByLimit( employee_id, limit );
+    return common.send(res, 200, _receipt, 'Success');
+
+  } catch (err) {
+    return common.send(res, 400, '', 'Exception error: ' + err);
+  }
+}
+
+async function accept (req, res, next) {
+  var employee_id = res.locals.employee_id;
+
+  var params = req.body;
+  const { isHasSub, id, p_id } = params;
+  
+  try {
+    const _employee = await employeeModel.findUserById(employee_id);
+    if(!_employee) return common.send(res, 300, '', 'Employee not found');
+    
+    const _receipt = await receiptModel.findReceiptById(p_id);
+    if(!_receipt) return common.send(res, 300, '', 'Receipt not found');
+
+    const _orders = await orderModel.findOrdersByReceiptId(p_id);
+    if(!_orders) return common.send(res, 300, '', 'Orders not found');
+    
+    let sub_receipts = {};
+    if(isHasSub === 1){
+      sub_receipts = await subReceiptModel.findBillByReceiptIdAndSubId(p_id, id);
+      if(!sub_receipts) return common.send(res, 300, '', 'Sub Receipt not found');
+    }    
+
+    let payload = {
+      employee: _employee ,
+      receipt: _receipt,
+      orders: _orders,
+      sub_receipts
+    }
+    
+    return common.send(res, 200, payload, 'Success')
+
+  } catch (err) {
+    return common.send(res, 400, '', 'Exception error: ' + err);
+  }
+}
+
 module.exports = {
   orders,
   get,
   split,
   loadHistory,
   search,
-  refund
+  cancelTransaction,
+  refund,
+  accept
 }

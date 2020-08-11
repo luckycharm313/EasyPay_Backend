@@ -51,14 +51,14 @@ async function phone (req, res, next) {
 
 async function verify (req, res, next) {
   var params = req.body;
-  const { phone } = params;
+  const { phone, iType } = params;
   
   var updated_at = moment(new Date()).format('YYYY-MM-DD hh:mm:ss');
 
   try {
     const _user = await userModel.findUserByPhone(phone);
     if( _user  ) {
-      if( _user.email ) {
+      if( iType === 1 ) {
         let token = jwt.sign({ id: _user.id }, constants.SECURITY_KEY, { expiresIn: 60 * 60 * 24 * 365 })
 
         let _query = 'UPDATE users SET token = ?, updated_at = ? WHERE phone = ? ';

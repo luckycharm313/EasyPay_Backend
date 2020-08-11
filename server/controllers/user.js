@@ -118,6 +118,22 @@ async function addUserInfo (req, res, next) {
 
       if (!__result) return common.send(res, 300, '', 'Database error');
 
+      /****** sending email */
+      if(email){
+        var subject = 'Welcome to EasyPay'
+        var html = `
+          <html>
+              <body>
+                  <p>Hi ${firstName} ${lastName}</p>
+                  <p>Welcome to Easy pay, unlock endless opportunities and experience.</p>
+                  <p>Warm Regards,</p>                
+                  <p>Easy Pay Team.</p>                
+              </body>
+          </html>
+        `;
+        common.sendEmail(email, subject, html);
+      }      
+      /***** end */
       return common.send(res, 200, token, 'Success');    
   } catch (err) {
     return common.send(res, 400, '', 'Exception error: ' + err);
@@ -327,6 +343,25 @@ async function changePhone (req, res, next) {
 
     if (!_result) return common.send(res, 300, '', 'Database error');
 
+    /****** sending email */
+    if(email){
+      var subject = 'Account Recovery'
+      var html = `
+        <html>
+          <body>
+            <p>Hi ${_user.firstName} ${_user.lastName}</p>
+            <p>Your phone number has been updated on the Easy Pay platform.</p>                
+            <p>While this is rare, If this change wasn’t made by you. PLEASE contact support@easypayplatform.io IMMEDIATELY!!</p>                
+            <p>Please disregard if you made this change to your account. We are just looking ou!.</p>
+            <p>Warm Regards,</p>                
+            <p>Easy Pay Team.</p>                
+          </body>
+        </html>
+      `;
+      common.sendEmail(email, subject, html);
+    }      
+    /***** end */
+
     return common.send(res, 200, true, 'Success');      
   } catch (err) {
     return common.send(res, 400, '', 'Exception error: ' + err);
@@ -514,6 +549,34 @@ async function getOne (req, res, next) {
   }
 }
 
+
+async function updateToken (req, res, next) {
+  var user_id = res.locals.user_id;
+  var params = req.body;
+  const { token } = params;
+  var updated_at = moment(new Date()).format('YYYY-MM-DD hh:mm:ss');
+  try {
+    const _user = await userModel.findUserById(user_id);
+    if(!_user) return common.send(res, 300, '', "User doesn't exist.");
+
+    let _query = 'UPDATE users SET push_token = ?,  updated_at = ? WHERE id = ? ';
+    let _values = [ token, updated_at, user_id ];
+    
+    let _result = await new Promise(function (resolve, reject) {
+      DB.query(_query, _values, function (err, data) {
+        if (err) reject(err);
+        else resolve(data.affectedRows > 0 ? true : false);
+      })
+    })
+
+    if (!_result) return common.send(res, 300, '', 'Database error');
+
+    return common.send(res, 200, true, 'Success');      
+  } catch (err) {
+    return common.send(res, 400, '', 'Exception error: ' + err);
+  }
+}
+
 module.exports = {
   phone,
   verify,
@@ -526,7 +589,7 @@ module.exports = {
   updateCard,
   changePhone,
   blockPush,
-
+  updateToken,
   // one time payment
   addOneUser,
   getOne

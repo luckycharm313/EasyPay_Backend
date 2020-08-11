@@ -17,6 +17,7 @@ router.get('/user/get', middleware.auth, user.getInfo);
 router.post('/user/blockPush', middleware.auth, user.blockPush);
 router.post('/user/setRate', middleware.auth, user.setRate);
 router.post('/user/updateCard', middleware.auth, user.updateCard);
+router.post('/user/updateToken', middleware.auth, user.updateToken);
 router.post('/receipt/get', receipt.get);
 router.post('/receipt/pay', middleware.auth, receipt.pay);
 router.post('/receipt/load', middleware.auth, receipt.loadHistory);

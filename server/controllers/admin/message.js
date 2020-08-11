@@ -56,10 +56,12 @@ async function sendAnnouncement (req, res, next) {
     var arr_users_block = users_block ? users_block.toString().split(',') : [];
     
     const _users = await messageModel.getAnnounceUsers(employee_id, array_receipt, array_sub_receipt, startDate, endDate, arr_users_block);
-
+    console.log({_users})
     let insertData = [];
+    let arrayPushNotification = [];
     _users.length > 0 && _users.forEach( e => {
       insertData.push([ announce, e.user_id, employee_id, e.r_no, e.sr_no, e.is_sub_receipt, created_at, updated_at ]);
+      if(e.push_token) arrayPushNotification.push(e.push_token);
     })
 
     let _query = 'INSERT INTO announcements ( announce, user_id, employee_id, receipt_no, sub_receipt_no, has_subreceipt, created_at, updated_at) VALUES ?';
@@ -73,6 +75,13 @@ async function sendAnnouncement (req, res, next) {
     })
     if (!_result) return common.send(res, 300, '', 'Database error');
 
+    let sendPushData = {
+      title: `${_employee['biz_name']} sent new message`,
+      body: announce
+    }
+    common.sendMessageThroughFCM(arrayPushNotification, sendPushData, function (response) {
+      console.log('push notification response => ', response);
+    })
     return common.send(res, 200, '', 'Success')
 
   } catch (err) {

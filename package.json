@@ -47,6 +47,7 @@
     "cross-env": "^5.2.0",
     "dotenv": "^2.0.0",
     "express": "^4.16.4",
+    "fcm-node": "^1.5.2",
     "fs": "^0.0.1-security",
     "generate-sms-verification-code": "^1.0.5",
     "glamor": "^2.20.40",

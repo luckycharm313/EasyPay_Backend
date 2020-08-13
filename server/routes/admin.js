@@ -17,4 +17,6 @@ router.post('/receipt/cancel', middleware.admin, receipt.cancelTransaction);
 router.post('/receipt/accept', middleware.admin, receipt.accept);
 
 router.post('/message/sendAnnouncement', middleware.admin, message.sendAnnouncement);
+router.post('/message/getAnnounceHistory', middleware.admin, message.getAnnounceHistory);
+router.post('/message/deleteAnnounce', middleware.admin, message.deleteAnnounce);
 module.exports = router;

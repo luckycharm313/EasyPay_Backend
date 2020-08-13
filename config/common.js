@@ -5,15 +5,23 @@ var fcm = new FCM(constants.FCM_KEY);
 
 var transporter = nodemailer.createTransport({
   service: "gmail",
+  secure: false,//true
+  port: 25,
   auth: {
     user: "easypayplatform@gmail.com",
     pass: "Adekoyakolade1",
   },
+  tls: {
+    rejectUnauthorized: false
+  }
 });
 
 exports.sendEmail = (to, subject, html) => {
   var mailOptions = {
-    from: "noreply@easypayplatform.io",
+    from: {
+      name: 'Easy Pay Platform',
+      address: 'noreply@easypayplatform.io'
+    },
     replyTo: "noreply@easypayplatform.io",
     to,
     subject,
@@ -22,6 +30,7 @@ exports.sendEmail = (to, subject, html) => {
 
   transporter.sendMail(mailOptions, function (error, info) {
     if (error) {
+      console.log(error)
       return error;
     } else {
       console.log("Email sent: " + info.response);

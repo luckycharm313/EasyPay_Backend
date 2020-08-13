@@ -63,7 +63,23 @@ async function blockEmployee (req, res, next) {
   }
 }
 
+async function deleteAnnounce (req, res, next) {
+  var user_id = res.locals.user_id;
+  var params = req.body;
+  const { limit, deleted_id } = params;
+  try {
+    var result = await messageModel.deleteAnnounceById(deleted_id);
+    if(result){
+      const _notifications = await messageModel.getNotifications(user_id, limit);
+      return common.send(res, 200, _notifications, 'Success');
+    }
+  } catch (err) {
+    return common.send(res, 400, '', 'Exception error: ' + err);
+  }
+}
+
 module.exports = {
   getNotification,
-  blockEmployee
+  blockEmployee,
+  deleteAnnounce
 }

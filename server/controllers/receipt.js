@@ -21,6 +21,10 @@ async function get (req, res, next) {
     const _receipt = await receiptModel.findReceiptById(receipt_id);
     if(!_receipt) return common.send(res, 300, '', 'Receipt not found');
 
+    if(sub_receipt_id == 0 && _receipt.is_sub_receipt == 1) {
+      return common.send(res, 300, '', "This receipt has the splited sub receipt. You can't pay it.");
+    }
+
     const _employee = await employeeModel.findUserById(_receipt.employee_id);
     if(!_employee) return common.send(res, 300, '', 'Employee not found');
 

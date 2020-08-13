@@ -4,9 +4,6 @@ var Promise = require('promise')
 var DB = require('../../../config/database')
 var constants = require('../../../config/constants')
 var employeeModel = require('../../models/employeeModel')
-var orderModel = require('../../models/orderModel')
-var receiptModel = require('../../models/receiptModel')
-var subReceiptModel = require('../../models/subReceiptModel')
 var messageModel = require('../../models/messageModel')
 
 const stripe = require('stripe')(constants.STRIPE_SECURITY_KEY);
@@ -76,7 +73,7 @@ async function sendAnnouncement (req, res, next) {
     if (!_result) return common.send(res, 300, '', 'Database error');
 
     let sendPushData = {
-      title: `${_employee['biz_name']} sent new message`,
+      title: `${_employee['biz_name']} sent you an announcement.`,
       body: announce
     }
     common.sendMessageThroughFCM(arrayPushNotification, sendPushData, function (response) {
@@ -88,7 +85,44 @@ async function sendAnnouncement (req, res, next) {
     return common.send(res, 400, '', 'Exception error: ' + err);
   }
 }
+async function getAnnounceHistory (req, res, next) {
+  var employee_id = res.locals.employee_id;
 
+  var params = req.body;
+  const { limit } = params;
+  try {
+    const _employee = await employeeModel.findUserById(employee_id);
+    if(!_employee) return common.send(res, 300, '', 'Employee not found');
+    
+    const _announce = await messageModel.getAnnounceByEmployee(employee_id, limit);
+
+    return common.send(res, 200, _announce, 'Success')
+
+  } catch (err) {
+    return common.send(res, 400, '', 'Exception error: ' + err);
+  }
+}
+
+async function deleteAnnounce (req, res, next) {
+  var employee_id = res.locals.employee_id;
+
+  var params = req.body;
+  const { limit, deleted_id } = params;
+  try {
+    const _employee = await employeeModel.findUserById(employee_id);
+    if(!_employee) return common.send(res, 300, '', 'Employee not found');
+    
+    var result = await messageModel.deleteAnnounceById(deleted_id);
+    if(result){
+      const _announce = await messageModel.getAnnounceByEmployee(employee_id, limit);
+      return common.send(res, 200, _announce, 'Success')
+    }
+  } catch (err) {
+    return common.send(res, 400, '', 'Exception error: ' + err);
+  }
+}
 module.exports = {
-  sendAnnouncement
+  sendAnnouncement,
+  getAnnounceHistory,
+  deleteAnnounce
 }

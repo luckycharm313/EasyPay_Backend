@@ -24,6 +24,7 @@ router.post('/receipt/load', middleware.auth, receipt.loadHistory);
 
 router.post('/message/getNotification', middleware.auth, message.getNotification);
 router.post('/message/blockEmployee', middleware.auth, message.blockEmployee);
+router.post('/message/deleteAnnounce', middleware.auth, message.deleteAnnounce);
 // one time payment
 router.post('/user/addOneUser', user.addOneUser);
 router.post('/receipt/payOne', receipt.payOne);

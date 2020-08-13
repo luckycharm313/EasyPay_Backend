@@ -69,5 +69,39 @@ module.exports = {
         } 
       })
     });
+  },
+  getAnnounceByEmployee: function( employee_id, limit ) {
+    var query = `
+    SELECT announcements.*, users.allow_notification, users.firstName, users.lastName, employee.users_block 
+    FROM announcements 
+    LEFT JOIN employee ON announcements.employee_id = employee.id
+    LEFT JOIN users ON announcements.user_id = users.id
+    WHERE announcements.employee_id = ? ORDER BY announcements.created_at DESC LIMIT ?
+    `;
+    var values = [employee_id, limit];
+    
+    return new Promise(function (resolve, reject) {
+      DB.query(query, values, function (err, data) {
+        if (err) reject(err);
+        else{
+          resolve(data.length > 0 ? data : []);
+        } 
+      })
+    });
+  },
+  deleteAnnounceById: function( id ) {
+    var query = `
+    DELETE FROM announcements WHERE id = ? 
+    `;
+    var values = [id];
+    
+    return new Promise(function (resolve, reject) {
+      DB.query(query, values, function (err, data) {
+        if (err) reject(err);
+        else{
+          resolve(data.affectedRows > 0 ? true : false);
+        } 
+      })
+    });
   }
 }

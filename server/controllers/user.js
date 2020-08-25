@@ -94,8 +94,8 @@ async function addUserInfo (req, res, next) {
   var created_at = moment(new Date()).format('YYYY-MM-DD hh:mm:ss');
   var updated_at = moment(new Date()).format('YYYY-MM-DD hh:mm:ss');
   try {
-      let _query = 'INSERT INTO users ( firstName, lastName, email, phone, user_type, zip_code, pin_code, photo, card_number, card_cvc, card_exp_month, card_exp_year, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
-      let _values = [ firstName, lastName, email, phone.replace(/\s/g, ''), 1, zip_code, pinCode, photo, card.number, card.cvc, card.expMonth, card.expYear, created_at, updated_at];
+      let _query = 'INSERT INTO users ( firstName, lastName, email, phone, user_type, zip_code, pin_code, photo, card_number, card_cvc, card_exp_month, card_exp_year, card_holder, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
+      let _values = [ firstName, lastName, email, phone.replace(/\s/g, ''), 1, zip_code, pinCode, photo, card.number, card.cvc, card.expMonth, card.expYear, card.holder, created_at, updated_at];
       let _result = await new Promise(function (resolve, reject) {
         DB.query(_query, _values, function (err, data) {
           if (err) reject(err);
@@ -147,8 +147,8 @@ async function addUserCardInfo (req, res, next) {
   var created_at = moment(new Date()).format('YYYY-MM-DD hh:mm:ss');
   var updated_at = moment(new Date()).format('YYYY-MM-DD hh:mm:ss');
   try {
-      let _query = 'INSERT INTO users (phone, user_type, zip_code, card_number, card_cvc, card_exp_month, card_exp_year, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)';
-      let _values = [phone.replace(/\s/g, ''), 1, zip_code, card.number, card.cvc, card.expMonth, card.expYear, created_at, updated_at];
+      let _query = 'INSERT INTO users (phone, user_type, zip_code, card_number, card_cvc, card_exp_month, card_exp_year, card_holder, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
+      let _values = [phone.replace(/\s/g, ''), 1, zip_code, card.number, card.cvc, card.expMonth, card.expYear, card.holder, created_at, updated_at];
       let _result = await new Promise(function (resolve, reject) {
         DB.query(_query, _values, function (err, data) {
           if (err) reject(err);
@@ -219,7 +219,7 @@ async function setRate (req, res, next) {
 async function updateCard (req, res, next) {
   var user_id = res.locals.user_id;
   var params = req.body;
-  const { email, zip_code, card } = params;
+  const { zip_code, card } = params;
   
   var updated_at = moment(new Date()).format('YYYY-MM-DD hh:mm:ss');
 
@@ -228,8 +228,8 @@ async function updateCard (req, res, next) {
     const _user = await userModel.findUserById(user_id);
     if(!_user) return common.send(res, 300, '', 'User not found');
 
-    let _query = 'UPDATE users SET email = ?, zip_code = ?, card_number = ?, card_cvc = ?, card_exp_month = ?, card_exp_year = ?,  updated_at = ? WHERE id = ? ';
-    let _values = [ email, zip_code, card.number, card.cvc, card.expMonth, card.expYear, updated_at, user_id ];
+    let _query = 'UPDATE users SET zip_code = ?, card_number = ?, card_cvc = ?, card_exp_month = ?, card_exp_year = ?, card_holder = ?,  updated_at = ? WHERE id = ? ';
+    let _values = [ zip_code, card.number, card.cvc, card.expMonth, card.expYear, card.holder, updated_at, user_id ];
     
     let _result = await new Promise(function (resolve, reject) {
       DB.query(_query, _values, function (err, data) {
@@ -343,6 +343,9 @@ async function changePhone (req, res, next) {
 
     if (!_result) return common.send(res, 300, '', 'Database error');
 
+    const __user__ = await userModel.findUserByPhone(new_phone);
+    if(!__user__) return common.send(res, 300, '', "user doesn't exist.");
+
     /****** sending email */
     if(email){
       var subject = 'Account Recovery'
@@ -361,8 +364,8 @@ async function changePhone (req, res, next) {
       common.sendEmail(email, subject, html);
     }      
     /***** end */
-
-    return common.send(res, 200, true, 'Success');      
+    
+    return common.send(res, 200, __user__, 'Success');      
   } catch (err) {
     return common.send(res, 400, '', 'Exception error: ' + err);
   }
@@ -500,8 +503,8 @@ async function addOneUser (req, res, next) {
 
       if(_user) {
       
-        let _query = 'UPDATE users SET zip_code = ?, card_number = ?, card_cvc = ?, card_exp_month = ?, card_exp_year = ?,  updated_at = ? WHERE email = ? ';
-        let _values = [ zip_code, card.number, card.cvc, card.expMonth, card.expYear, updated_at, email ];
+        let _query = 'UPDATE users SET zip_code = ?, card_number = ?, card_cvc = ?, card_exp_month = ?, card_exp_year = ?, card_holder =?,  updated_at = ? WHERE email = ? ';
+        let _values = [ zip_code, card.number, card.cvc, card.expMonth, card.expYear, card.holder, updated_at, email ];
         
         let _result = await new Promise(function (resolve, reject) {
           DB.query(_query, _values, function (err, data) {
@@ -515,8 +518,8 @@ async function addOneUser (req, res, next) {
         return common.send(res, 200, _user.id, 'Success');
   
       } else {
-        let _query = 'INSERT INTO users ( email, zip_code, card_number, card_cvc, card_exp_month, card_exp_year, user_type, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)';
-        let _values = [ email, zip_code, card.number, card.cvc, card.expMonth, card.expYear, 0, created_at, updated_at];
+        let _query = 'INSERT INTO users ( email, zip_code, card_number, card_cvc, card_exp_month, card_exp_year, card_holder, user_type, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
+        let _values = [ email, zip_code, card.number, card.cvc, card.expMonth, card.expYear, card.holder, 0, created_at, updated_at];
         
         let user_id = await new Promise(function (resolve, reject) {
           DB.query(_query, _values, function (err, data) {

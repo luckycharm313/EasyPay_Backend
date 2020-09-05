@@ -9,7 +9,7 @@ var messageModel = require('../../models/messageModel')
 const stripe = require('stripe')(constants.STRIPE_SECURITY_KEY);
 
 async function sendAnnouncement (req, res, next) {
-  var employee_id = res.locals.employee_id;
+  var employee_id = res.locals.id;
 
   var params = req.body;
   const {  array_receipt_no, announce, receipt_date, day, month, year } = params;
@@ -27,7 +27,7 @@ async function sendAnnouncement (req, res, next) {
       array_receipt.push(element);
     }
   });
-
+  
   if(receipt_date){
     startDate = moment(new Date(receipt_date)).unix();    
     if( day !== '') {
@@ -53,7 +53,9 @@ async function sendAnnouncement (req, res, next) {
     var arr_users_block = users_block ? users_block.toString().split(',') : [];
     
     const _users = await messageModel.getAnnounceUsers(employee_id, array_receipt, array_sub_receipt, startDate, endDate, arr_users_block);
-    console.log({_users})
+    
+    if(_users.length === 0) return common.send(res, 300, '', 'There is no receivers.');
+
     let insertData = [];
     let arrayPushNotification = [];
     _users.length > 0 && _users.forEach( e => {
@@ -86,7 +88,7 @@ async function sendAnnouncement (req, res, next) {
   }
 }
 async function getAnnounceHistory (req, res, next) {
-  var employee_id = res.locals.employee_id;
+  var employee_id = res.locals.id;
 
   var params = req.body;
   const { limit } = params;
@@ -104,7 +106,7 @@ async function getAnnounceHistory (req, res, next) {
 }
 
 async function deleteAnnounce (req, res, next) {
-  var employee_id = res.locals.employee_id;
+  var employee_id = res.locals.id;
 
   var params = req.body;
   const { limit, deleted_id } = params;

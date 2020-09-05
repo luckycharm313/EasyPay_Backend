@@ -37,4 +37,28 @@ module.exports = {
       })
     });
   },
+  getAllUsers: function () {
+
+    var query = 'SELECT * FROM users WHERE user_type = ?';
+    var values = [1];
+    
+    return new Promise(function (resolve, reject) {
+      DB.query(query, values, function (err, data) {
+        if (err) reject(err);
+        else resolve(data.length > 0 ? data : []);
+      })
+    });
+  },
+  getAdminList: function () {
+
+    var query = 'SELECT * FROM admins WHERE permission=?';
+    var values = [0];
+    
+    return new Promise(function (resolve, reject) {
+      DB.query(query, values, function (err, data) {
+        if (err) reject(err);
+        else resolve(data.length > 0 ? data : []);
+      })
+    });
+  },
 }

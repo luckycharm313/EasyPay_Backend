@@ -26,4 +26,4 @@ public
 /.nyc-coverage-temp
 /lint-report.html
 /.nyc_output/
-
+/server/uploads/

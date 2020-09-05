@@ -2,10 +2,10 @@ var Promise = require('promise');
 var DB = require('../../config/database');
 
 module.exports = {
-  findUserBySelfId: function ( selfId, companyId ) {
+  findUserByEmployeeId: function ( employee_id, companyId ) {
 
-    var query = 'SELECT * FROM employee WHERE self_id = ? AND company_id = ?';
-    var values = [selfId, companyId];
+    var query = 'SELECT * FROM employee WHERE employee_id = ? AND company_id = ?';
+    var values = [employee_id, companyId];
     
     return new Promise(function (resolve, reject) {
       DB.query(query, values, function (err, data) {
@@ -16,7 +16,7 @@ module.exports = {
   },
   findUserById: function ( id ) {
 
-    var query = 'SELECT * FROM employee WHERE id = ?';
+    var query = `SELECT * FROM employee LEFT JOIN companies ON employee.company_id = companies.id WHERE employee.id = ?`;
     var values = [id];
     
     return new Promise(function (resolve, reject) {
@@ -26,10 +26,10 @@ module.exports = {
       })
     });
   },
-  findManagerById: function ( manager_id, manager_pin, id ) {
+  findManagerById: function ( pin, id ) {
 
-    var query = 'SELECT * FROM employee WHERE manager_id =? AND manager_pin = ? AND id = ?';
-    var values = [manager_id, manager_pin, id];
+    var query = 'SELECT * FROM employee LEFT JOIN companies ON employee.company_id = companies.id WHERE companies.biz_pin = ? AND employee.id = ?';
+    var values = [pin, id];
     
     return new Promise(function (resolve, reject) {
       DB.query(query, values, function (err, data) {

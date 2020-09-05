@@ -4,7 +4,7 @@ var DB = require('../../config/database');
 module.exports = {
   findOrdersByReceiptId: function ( id ) {
 
-    var query = 'SELECT * FROM orders WHERE receipt_id = ? ';
+    var query = 'SELECT * FROM orders LEFT JOIN products ON orders.product_id = products.id WHERE orders.receipt_id = ? ';
     var values = [id];
     
     return new Promise(function (resolve, reject) {

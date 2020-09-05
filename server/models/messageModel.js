@@ -54,9 +54,10 @@ module.exports = {
   },
   getNotifications: function( user_id, limit ) {
     var query = `
-    SELECT announcements.*, employee.biz_name, employee.users_block 
+    SELECT announcements.*, employeeTable.biz_name, employeeTable.users_block 
     FROM announcements 
-    LEFT JOIN employee ON announcements.employee_id = employee.id
+    LEFT JOIN (SELECT companies.biz_name, employee.id as e_id, employee.users_block FROM employee LEFT JOIN companies ON companies.id = employee.company_id) AS employeeTable
+    ON announcements.employee_id = employeeTable.e_id
     WHERE announcements.user_id = ? ORDER BY announcements.created_at DESC LIMIT ?
     `;
     var values = [user_id, limit];
@@ -72,9 +73,10 @@ module.exports = {
   },
   getAnnounceByEmployee: function( employee_id, limit ) {
     var query = `
-    SELECT announcements.*, users.allow_notification, users.firstName, users.lastName, employee.users_block 
+    SELECT announcements.*, users.allow_notification, users.firstName, users.lastName, employeeTable.users_block, employeeTable.biz_name 
     FROM announcements 
-    LEFT JOIN employee ON announcements.employee_id = employee.id
+    LEFT JOIN (SELECT companies.biz_name, employee.id as e_id, employee.users_block FROM employee LEFT JOIN companies ON companies.id = employee.company_id) AS employeeTable
+    ON announcements.employee_id = employeeTable.e_id
     LEFT JOIN users ON announcements.user_id = users.id
     WHERE announcements.employee_id = ? ORDER BY announcements.created_at DESC LIMIT ?
     `;

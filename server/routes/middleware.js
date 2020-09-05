@@ -24,8 +24,22 @@ function admin(req, res, next) {
     if( err ) {
       return common.send(res, 300, '', 'There is no authenticate token.');      
     } else {
-      res.locals.employee_id = decoded.id;
-      res.locals.self_id = decoded.self_id;
+      res.locals.id = decoded.id;
+      res.locals.company_id = decoded.company_id;
+      return next();
+    }
+  });
+   
+}
+
+function dashboard(req, res, next) {
+  if( req.headers['token'] === undefined || req.headers['token'] === '') return common.send(res, 300, '', 'There is no authenticate token.');
+  
+  jwt.verify(req.headers['token'], constants.SECURITY_KEY, function(err, decoded) {
+    if( err ) {
+      return common.send(res, 300, '', 'There is no authenticate token.');      
+    } else {
+      res.locals.admin_id = decoded.id;
       return next();
     }
   });
@@ -34,5 +48,6 @@ function admin(req, res, next) {
 
 module.exports = {
   auth,
-  admin
+  admin,
+  dashboard
 }

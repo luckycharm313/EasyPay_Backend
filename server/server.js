@@ -54,7 +54,8 @@ app.get('/', function(req, res) {
 app.post('/upload', upload, (req, res) => {
   const _url = req.protocol + '://' + req.get('host')
   console.log("Request file ---", req.file);//Here you get file.
-  let url =  _url + '/uploads/' + req.file.filename
+  let url =  _url + '/uploads/' + req.file.filename;  // for local
+ // let url =  'https://www.easypayplatform.io/api/uploads/' + req.file.filename; // for server
   return res.send(url).end();
 })
 

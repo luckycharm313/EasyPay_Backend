@@ -21,6 +21,8 @@ router.post('/company/deleteCompany', middleware.dashboard, company.deleteCompan
 router.get('/transaction/getList', middleware.dashboard, transaction.getList);
 router.post('/transaction/detail', middleware.dashboard, transaction.detail);
 
+router.post('/transaction/chartInfo', middleware.dashboard, transaction.chartInfo);
+
 router.get('/user/getList', middleware.dashboard, user.getList);
 router.post('/user/deleteUser', middleware.dashboard, user.deleteUser);
 router.post('/user/blockUser', middleware.dashboard, user.blockUser);

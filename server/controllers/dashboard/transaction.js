@@ -1,5 +1,6 @@
-var common = require('../../../config/common')
-var DB = require('../../../config/database')
+var moment = require('moment');
+var common = require('../../../config/common');
+var DB = require('../../../config/database');
 var transModel = require("../../models/transModel");
 var userModel = require("../../models/userModel");
 var orderModel = require("../../models/orderModel");
@@ -41,7 +42,37 @@ async function detail (req, res, next) {
   }
 }
 
+async function chartInfo (req, res, next) {
+  const { index } = req.body;
+  var year = moment(new Date()).format('YYYY');
+
+  try {
+    
+    if( index === 1 ) // monthly
+    {
+      let payload = [0,0,0,0,0,0,0,0,0,0,0,0];
+      let _payload = await transModel.getMonthlyTrans(year);
+      _payload.forEach( e => {
+        payload[ e.m - 1 ] = e.total
+      });
+      return common.send(res, 200, payload, "Success");
+    }
+    else // weekly
+    {
+      let payload = [0,0,0,0,0,0,0];
+      _payload = await transModel.getWeeklyTrans(year);
+      _payload.forEach( e => {
+        payload[ e.w ] = e.total
+      });
+      return common.send(res, 200, payload, "Success");
+    }
+  } catch (err) {
+    return common.send(res, 400, '', 'Exception error: ' + err);
+  }
+}
+
 module.exports = {
   getList,
-  detail
+  detail,
+  chartInfo
 }

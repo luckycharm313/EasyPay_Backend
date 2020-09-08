@@ -62,28 +62,82 @@ module.exports = {
   },
   getSubTransDetail: function (sub_id) {
     var query = `
-    SELECT ec.*, s_r.*
-    FROM (
-      SELECT sub_receipts.cost, sub_receipts.parent_receipt_id, sub_receipts.status, sub_receipts.created_at, sub_receipts.id as sb_id, receipts.is_sub_receipt, receipts.employee_id as e_id, sub_receipts.tip, receipts.sub_total, sub_receipts.user_id, sub_receipts.paid_date, receipts.total
-      FROM sub_receipts
-      LEFT JOIN receipts
-      ON sub_receipts.parent_receipt_id = receipts.id
-    ) as s_r
-    LEFT JOIN (
-      SELECT employee.id, companies.biz_name, companies.biz_phone, companies.biz_email, companies.biz_address, companies.tax,  employee.employee_name, employee.employee_id
-      FROM employee 
-      LEFT JOIN companies 
-      ON companies.id = employee.company_id) AS ec 
-    ON ec.id = s_r.e_id
-    WHERE s_r.sb_id = ?
-  `;
-  var values = [sub_id];
-  
-  return new Promise(function (resolve, reject) {
-    DB.query(query, values, function (err, data) {
-      if (err) reject(err);
-      else resolve(data.length > 0 ? data[0] : []);
-    })
-  });
+      SELECT ec.*, s_r.*
+      FROM (
+        SELECT sub_receipts.cost, sub_receipts.parent_receipt_id, sub_receipts.status, sub_receipts.created_at, sub_receipts.id as sb_id, receipts.is_sub_receipt, receipts.employee_id as e_id, sub_receipts.tip, receipts.sub_total, sub_receipts.user_id, sub_receipts.paid_date, receipts.total
+        FROM sub_receipts
+        LEFT JOIN receipts
+        ON sub_receipts.parent_receipt_id = receipts.id
+      ) as s_r
+      LEFT JOIN (
+        SELECT employee.id, companies.biz_name, companies.biz_phone, companies.biz_email, companies.biz_address, companies.tax,  employee.employee_name, employee.employee_id
+        FROM employee 
+        LEFT JOIN companies 
+        ON companies.id = employee.company_id) AS ec 
+      ON ec.id = s_r.e_id
+      WHERE s_r.sb_id = ?
+    `;
+    var values = [sub_id];
+    
+    return new Promise(function (resolve, reject) {
+      DB.query(query, values, function (err, data) {
+        if (err) reject(err);
+        else resolve(data.length > 0 ? data[0] : []);
+      })
+    });
   },
+  getMonthlyTrans: function ( year ) {
+    var query = `
+      SELECT YEAR(FROM_UNIXTIME(receipt_table.paid_date)) AS y, MONTH(FROM_UNIXTIME(receipt_table.paid_date)) AS m, SUM(receipt_table.total) AS total 
+      FROM (
+          SELECT paid_date, total 
+          FROM receipts WHERE status= 1 AND is_sub_receipt = 0
+          UNION
+          SELECT sub_receipts.paid_date, sub_receipts.cost 
+          FROM sub_receipts 
+          LEFT JOIN receipts 
+          ON sub_receipts.parent_receipt_id = receipts.id 
+          WHERE receipts.status=0 AND sub_receipts.status = 1
+        ) as receipt_table
+      WHERE YEAR(FROM_UNIXTIME(receipt_table.paid_date)) = ?
+      GROUP BY YEAR(FROM_UNIXTIME(receipt_table.paid_date)), MONTH(FROM_UNIXTIME(receipt_table.paid_date))
+      ORDER BY YEAR(FROM_UNIXTIME(receipt_table.paid_date)), MONTH(FROM_UNIXTIME(receipt_table.paid_date))
+    `;
+    var values = [year];
+    
+    return new Promise(function (resolve, reject) {
+      DB.query(query, values, function (err, data) {
+        if (err) reject(err);
+        else resolve(data.length > 0 ? data : []);
+      })
+    });
+    
+  },
+  getWeeklyTrans: function ( year ) {
+    var query = `
+    SELECT WEEKDAY(FROM_UNIXTIME(receipt_table.paid_date)) AS w, SUM(receipt_table.total) AS total 
+    FROM (
+        SELECT paid_date, total 
+        FROM receipts WHERE status= 1 AND is_sub_receipt = 0
+        UNION
+        SELECT sub_receipts.paid_date, sub_receipts.cost 
+        FROM sub_receipts 
+        LEFT JOIN receipts 
+        ON sub_receipts.parent_receipt_id = receipts.id 
+        WHERE receipts.status=0 AND sub_receipts.status = 1
+      ) as receipt_table
+    WHERE YEAR(FROM_UNIXTIME(receipt_table.paid_date)) = ?
+    GROUP BY WEEKDAY(FROM_UNIXTIME(receipt_table.paid_date))
+    ORDER BY WEEKDAY(FROM_UNIXTIME(receipt_table.paid_date))
+    `;
+    var values = [year];
+    
+    return new Promise(function (resolve, reject) {
+      DB.query(query, values, function (err, data) {
+        if (err) reject(err);
+        else resolve(data.length > 0 ? data : []);
+      })
+    });
+    
+  }
 }

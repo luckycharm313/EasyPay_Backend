@@ -1,0 +1,37 @@
+.cardForm {
+  padding: 52px 33px;
+}
+.cardForm h5 {
+  font-family: "Metropolis-Medium";
+  font-style: normal;
+  font-weight: 500;
+  font-size: 34px;
+  color: #333333;
+}
+.cardform-img {
+  width: 36px;
+  height: 36px;
+}
+.cardform-label {
+  font-style: normal;
+  font-weight: normal;
+  font-size: 18px;
+  color: #000000;
+  margin-top: 5px;
+}
+
+@media only screen and (max-width: 576px) {
+  .cardForm h5 {
+    font-size: 28px;
+  }
+  .cardForm {
+    padding: 40px 18px;
+  }
+  .cardform-img {
+    width: 30px;
+    height: 30px;
+  }
+  .cardform-label {
+    font-size: 15px;
+  }
+}

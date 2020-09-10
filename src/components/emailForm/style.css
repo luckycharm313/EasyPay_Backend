@@ -1,0 +1,46 @@
+.email-input::placeholder {
+  color: #ffffff;
+  opacity: 1;
+}
+.email-input {
+  width: 60%;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 14px;
+  color: #ffffff;
+  background-color: transparent;
+  background: #4b5bfb;
+  border-top-left-radius: 45px;
+  border-bottom-left-radius: 45px;
+  padding: 12px 30px;
+  vertical-align: middle;
+  outline: none;
+  border: none;
+}
+.btn-half-request {
+  width: 40%;
+  padding: 15px 41px;
+  height: 44px;
+  background: #ffffff;
+  border-top-right-radius: 45px;
+  border-bottom-right-radius: 45px;
+  font-family: "Metropolis-SemiBold";
+  font-style: normal;
+  font-weight: 600;
+  font-size: 13px;
+  color: #1e32fa;
+  border: none;
+  vertical-align: middle;
+}
+.btn-half-request:focus{
+  outline: none;
+}
+
+@media only screen and (max-width: 576px) {
+  .email-input {
+    padding: 12px 20px;
+  }
+  .btn-half-request {
+    padding: 15px 21px;
+  }
+}

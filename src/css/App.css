@@ -1,43 +1,108 @@
 /* PAGE */
 @font-face {
-  font-family: 'Exo';
-  src: url('../assets/exo.regular.otf');
+  font-family: 'Metropolis-Black';
+  src: url('../assets/fonts/Metropolis-Black.otf');
 }
 
 @font-face {
-  font-family: 'Time New Roman';
-  src: url('../assets/Times-New-Roman.ttf');
+  font-family: 'Metropolis-BlackItalic';
+  src: url('../assets/fonts/Metropolis-BlackItalic.otf');
 }
 
 @font-face {
-  font-family: 'Futura';
-  src: url('../assets/Futura.ttc');
+  font-family: 'Metropolis-Bold';
+  src: url('../assets/fonts/Metropolis-Bold.otf');
 }
+
+@font-face {
+  font-family: 'Metropolis-BoldItalic';
+  src: url('../assets/fonts/Metropolis-BoldItalic.otf');
+}
+
+@font-face {
+  font-family: 'Metropolis-ExtraBold';
+  src: url('../assets/fonts/Metropolis-ExtraBold.otf');
+}
+
+@font-face {
+  font-family: 'Metropolis-ExtraBoldItalic';
+  src: url('../assets/fonts/Metropolis-ExtraBoldItalic.otf');
+}
+
+@font-face {
+  font-family: 'Metropolis-ExtraLight';
+  src: url('../assets/fonts/Metropolis-ExtraLight.otf');
+}
+
+@font-face {
+  font-family: 'Metropolis-ExtraLightItalic';
+  src: url('../assets/fonts/Metropolis-ExtraLightItalic.otf');
+}
+
+@font-face {
+  font-family: 'Metropolis-Light';
+  src: url('../assets/fonts/Metropolis-Light.otf');
+}
+
+@font-face {
+  font-family: 'Metropolis-LightItalic';
+  src: url('../assets/fonts/Metropolis-LightItalic.otf');
+}
+
+@font-face {
+  font-family: 'Metropolis-Medium';
+  src: url('../assets/fonts/Metropolis-Medium.otf');
+}
+
+@font-face {
+  font-family: 'Metropolis-MediumItalic';
+  src: url('../assets/fonts/Metropolis-MediumItalic.otf');
+}
+
+@font-face {
+  font-family: 'Metropolis-Regular';
+  src: url('../assets/fonts/Metropolis-Regular.otf');
+}
+
+@font-face {
+  font-family: 'Metropolis-RegularItalic';
+  src: url('../assets/fonts/Metropolis-RegularItalic.otf');
+}
+
+@font-face {
+  font-family: 'Metropolis-SemiBold';
+  src: url('../assets/fonts/Metropolis-SemiBold.otf');
+}
+
+@font-face {
+  font-family: 'Metropolis-SemiBoldItalic';
+  src: url('../assets/fonts/Metropolis-SemiBoldItalic.otf');
+}
+
+@font-face {
+  font-family: 'Metropolis-Thin';
+  src: url('../assets/fonts/Metropolis-Thin.otf');
+}
+
+@font-face {
+  font-family: 'Metropolis-ThinItalic';
+  src: url('../assets/fonts/Metropolis-ThinItalic.otf');
+}
+
 html {
-  font-family: 'Time New Roman' !important;
+  font-family: 'Metropolis-Regular' !important;
   height: 100%;
   margin: 0px;
 }
+
 body {
-  font-family: 'Time New Roman' !important;
+  font-family: 'Metropolis-Regular' !important;
   height: 100%;
   margin: 0px;
   -webkit-background-size: cover;
   -moz-background-size: cover;
   -o-background-size: cover;
   background-size: cover;
-  background-color: #0B57D1 !important;
-  color: #fff !important;
-  
-}
-.btn-main {
-  background-color: #469DF4;
-  color: #ffffff;
-  font-size: 15px;
-  font-weight: 500;
-  padding: 7px 30px;
-  border-radius: 5px;
-  border: 2px solid white;
-  text-align: center;
-  cursor: pointer;
+  background-color: #FFFFFF !important;
+  color: #4F4F4F !important;  
 }

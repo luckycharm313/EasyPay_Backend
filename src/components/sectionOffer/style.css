@@ -1,0 +1,31 @@
+.img-offer {
+  width: 90%;
+}
+.offer-title {
+  font-family: "Metropolis-SemiBold";
+  font-style: normal;
+  font-weight: 600;
+  font-size: 34px;
+  color: #333333;
+  margin-bottom: 34px;
+}
+.offer-contents {
+  font-style: normal;
+  font-weight: normal;
+  font-size: 14px;
+  color: #4f4f4f;
+  width: 80%;
+}
+
+@media only screen and (max-width: 768px) {
+  .img-offer {
+    width: 100%;
+  }
+  .offer-title {
+    font-size: 30px;
+    margin-bottom: 24px;
+  }
+  .offer-contents {
+    width: 100%;
+  }
+}

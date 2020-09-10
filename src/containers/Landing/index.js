@@ -1,140 +1,169 @@
-import React, { useState/*, useEffect*/ } from 'react';
-import { connect } from 'react-redux';
-import { withRouter } from 'react-router-dom';
-import {
-  requestSend
-} from '../../redux/actions/startup'
-import './style.css';
+import React from "react";
+import { connect } from "react-redux";
+import { withRouter } from "react-router-dom";
+import { requestSend } from "../../redux/actions/startup";
+import EmailForm from "../../components/emailForm";
+import SectionOffer from "../../components/sectionOffer";
+import CardForm from "../../components/cardForm";
+import ContactForm from "../../components/contactForm";
+import { offers, deserves_1, deserves_2 } from "../../services/Constants";
+import "./style.css";
 
 function Landing({ requestSend }) {
-  const [phone, setPhone] = useState('');
-  const onSendHandle = () => {
-    let regNumber = /^\d+$/ ;
-    if( phone === '' || regNumber.test(phone) === false ) return alert('Phone is not correct. Must be number');
-    var params = { phone };
+  const onSendHandle = (email) => {
+    let reg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+    if (email === '' || reg.test(email) === false)
+      return alert("Invalid email");
+    var params = { 
+      email,
+      name: '',
+      message: ''
+    };
     requestSend(params);
-    setPhone('');
   };
 
-  return (      
-    <div className='container d-flex flex-column'>
-      <div className='row d-flex flex-column align-items-center justify-content-center s-b'>
-        <a href='/' className='p-0 as'>
-          <img src={require('../../assets/easypay.png')} alt='logo' className='img-logo'/>
-        </a>        
-        <h3 className='text-center mt-3 e-font' >Easy Pay Platform</h3>
-        <span className='text-center f-d e-font'>Making Payment Real Easy</span>
-      </div>
-      <div className='row s-t'>
-        <div className='col-md-6 my-4 d-flex flex-column justify-content-end'>
-          <div className=''>
-            <p className='text-center'>Easy Pay is a platform that simplifies making and receiving Payments altogether.</p>
-            <p className='text-center'>Our system focuses on every day people by bringing back privacy to payments.</p>
-            <p className='text-center'>We also enable businesses receive & process payments seamlessly.</p>
-          </div>
-          <div className='ps-4 mst-5'>
-            <p className='f-d mb-1'>Enter your number To Request A Demo & Learn More:</p>
-            <div className='d-flex flex-row align-items-center' >
-              <input className='form-control f-d txt-ellipsis' placeholder='Enter your number To Request A Demo & Learn More' type='text' value={phone} onChange={(e) => setPhone(e.target.value)} />
-              <button type='button' className='ml-2 btn-main' onClick={onSendHandle}>Request</button>
-            </div>
-          </div>        
-        </div>
-        <div className='col-md-6 my-4'>
-          <img src={require('../../assets/mobile.png')} alt='mobile' className='img-mobile'/>          
-        </div>
-        <div className='ml-auto col-md-6'>
-          <p className='text-center mt-4 mb-0 f-font'>COMING SOON ON ANDROID & APPLE APP STORES</p>
-          <div className='d-flex flex-row justify-content-center mt-2'>
-            <img src={require('../../assets/iphone.png')} alt='mobile' className='icon-mobile'/>
-            <img src={require('../../assets/android.png')} alt='mobile' className='icon-mobile ml-2'/>
-          </div>
-        </div>
-      </div>
-      <div className='line my-4'></div>
+  const onContactHandle = (params) => {
+    requestSend(params);
+  };
 
-      <div className='row my-5'>
-        <div className='col-md-12'>
-          <div className='d-flex flex-column align-items-center justify-content-center mx-auto'>
-            <img src={require('../../assets/bucket-qr.png')} alt='QR' className='img-icon'/>
-            <span className='text-center mt-3 font-weight-bold f-font'>DIGITAL WALLET</span>
-          </div>
-          <p className='text-center f-d mt-4'>
-            A digital wallet powered by mobile app. We are bringing back privacy to payments. You don’t have to worry about your debit or 
-            credit card exchanging hands at restaurants, bars and other business places. Simply make payments, tip, split bills, see recent 
-            activities and much more right from your personalized easy pay app. With just a Tap and a barcode scan, your payment is DONE 
-            and SECURED! It’s a promise, we are making payments feel and look real easy. 
+  return (
+    <>
+      <nav className="navbar header-container main-p">
+        <div className="navbar-brand">
+          <img
+            src={require("../../assets/app_logo.png")}
+            width="114"
+            height="40"
+            className="d-inline-block align-top"
+            alt=""
+          />
+        </div>
+        <button type="button" className="btn-request" onClick={onSendHandle}>
+          Request a demo
+        </button>
+      </nav>
+      <div className="container-fluid d-flex flex-column header-bg">
+        <div className="txt-header-container">
+          <h3 className="txt-header">
+            A two-way solution for businesses & everyday consumers
+          </h3>
+          <p className="txt-sub-header">
+            Create and enjoy the{" "}
+            <strong className="font-weight-bold f-b">
+              best payment experience
+            </strong>
           </p>
+          <div className="email-container">
+            <EmailForm onSendHandle={(phone) => onSendHandle(phone)}/>
+          </div>
+        </div>
+        <div className="card header-image">
+          <img
+            src={require("../../assets/phone_1.png")}
+            className="d-inline-block align-top"
+            alt=""
+          />
+        </div>
+      </div>
+      <div className="container-fluid main-p section-p">
+        <h3 className="section-header">
+          What we offer
+        </h3>
+        <p className="section-sub-header">
+          Receive payments and create, a seamless experience with our suite of features. 
+        </p>
+        <div className="position-relative offer-section">
+          <SectionOffer data={offers[0]} iType={1} />
+          <div className="offer-line">
+            <img
+              src={require("../../assets/line_1.png")}
+              className="d-inline-block align-top"
+              alt=""
+            />
+          </div>
+        </div>
+        <div className="position-relative offer-section-2">
+        <SectionOffer data={offers[1]} iType={2} />
+        <div className="offer-line-2">
+          <img
+            src={require("../../assets/line_2.png")}
+            className="d-inline-block align-top"
+            alt=""
+          />
+        </div>
+        </div>
+        <SectionOffer data={offers[2]} iType={1} />
+      </div>
+      <div className="container-fluid second-part main-p">
+        <div className="second-part-container">
+          <h3 className="second-part-header">
+            Be the first to get a Demo
+          </h3>
+          <p className="second-part-sub-header">
+          Try out our application for your organization, and start measuring your financial success rate. 
+          </p>
+          <div className="email-container">
+            <EmailForm />
+          </div>
+          <img
+            src={require("../../assets/hands.png")}
+            className="d-inline-block align-top"
+            alt=""
+          />
         </div>        
       </div>
-      <div className='line my-4'></div>
-      
-      <div className='row my-5'>
-        <div className='col-md-12'>
-          <div className='d-flex flex-column align-items-center justify-content-center mx-auto'>
-            <img src={require('../../assets/easypayadmin.png')} alt='Admin' className='img-icon'/>
-            <span className='text-center font-weight-bold f-font mt-3'>ADMIN CONSOLE</span>
-          </div>
-          <p className='text-center f-d mt-4'>
-          With our admin console, we make it easy to issue receipts, track payments, process payments securely while giving your 
-          customers a fast and amazing experience. All payments are digital, so you do not have to worry about paper or wastage. 
-          We are aware of global warming and its effects, so we are eco friendly. Easy pay is the new way to make and receive payments.
-          Our console is completely customizable. Make it yours, Easy Pay is made to fit and adapt any business operations.  
-          </p>
-        </div>        
-      </div>
-      <div className='line my-4'></div>
-      
-      <div className='row my-5'>
-        <div className='col-md-12'>
-          <div className='d-flex flex-column align-items-center justify-content-center mx-auto'>
-            <img src={require('../../assets/warning.png')} alt='Security' className='img-icon'/>
-            <span className='text-center font-weight-bold f-font mt-3'>SECURITY</span>
-          </div>
-          <p className='text-center f-d mt-4'>
-          Easy pay values security. That is the reason we started in the first place. We are PCI compliant and all payments are processed 
-          with end to end encryption. You always have control over your personal and important information. We built the system that way.
-          We picture a world where you never have to give you card to anybody again and the change starts with YOU, it starts with US.
-          Be rest assured , you’re in safe hands. 
-          </p>
-        </div>        
-      </div>
-      <div className='line my-4'></div>
-
-      <div className='row my-5'>
-        <div className='col-md-12'>
-          <div className='d-flex flex-column align-items-center justify-content-center mx-auto'>
-            <img src={require('../../assets/cell-phone.png')} alt='Contact US' className='img-icon'/>
-            <span className='text-center font-weight-bold f-font mt-3'>CONTACT US</span>            
-          </div>
-          <p className='text-center f-d mt-4'>
-          We are currently working on our beta app. We’ll like you to try it out and request a demo to experience the power of Easy pay. 
-          Enter your phone number or email below to request a demo & learn more.
-          </p>
-          <p className='text-center f-d'>
-          Talk to US! We are easy to approach and we will address your concerns. Email us: Support@easypayplatform.io
-          </p>
-          <div className='mt-5 ws-75 mx-auto'>
-            <p className='f-d mb-1'>Enter your number To Request A Demo & Learn More:</p>
-            <div className='d-flex flex-row align-items-center' >
-              <input className='form-control f-d txt-ellipsis' placeholder='Enter your number To Request A Demo & Learn More' type='text' value={phone} onChange={(e) => setPhone(e.target.value)} />
-              <button type='button' className='ml-2 btn-main' onClick={onSendHandle}>Request</button>
+      <div className="container-fluid main-p deserve-container">
+        <h3 className="deserve-header">
+          Why <strong className="font-weight-bold f-b">Easy Pay</strong> deserves your trust 
+        </h3>
+        <div className="row mt-5 justify-content-around align-items-center">
+          <div className="col-md-5 mx-4 deserve-1">
+            <CardForm info={deserves_1} title='Easy Pay' />
+            <div className="deserve-1-img">
+              <img
+                src={require("../../assets/card_1.png")}
+                className="d-inline-block align-top"
+                alt=""
+              />
             </div>
           </div>
-        </div>        
+          <div className="col-md-5 mx-4 deserve-2">
+            <CardForm info={deserves_2} title='Others' />
+            <div className="deserve-1-img">
+              <img
+                src={require("../../assets/card_2.png")}
+                className="d-inline-block align-top"
+                alt=""
+              />
+            </div>
+          </div>
+        </div>
       </div>
-      <div className='line my-4'></div>
-      <div className='row my-4'>
-        <p className='mx-auto'>Copyright 2020 Easy Pay Platform LLC.</p>
+      <div className="container-fluid main-p d-flex flex-column justify-content-end footer-bg">
+        <div className="row">
+          <div className="col-md-7 mb-5 d-flex align-items-end">
+            <div className="foot-container">
+              <h5 className="mb-5">Contact us</h5>
+              <p className="mb-3">We are easy to approach and we will address your concerns.</p>
+              <p className="mb-5">support@easypayplatform.io</p>
+            </div>            
+          </div>
+          <div className="col-md-5">
+            <ContactForm onContactHandle={(e) => onContactHandle(e)}/>
+          </div>
+        </div>
       </div>
-    </div>
+      <div className="footer d-flex align-items-center main-p">
+        <h6>Copyright 2020 Easy Pay Platform LLC.</h6>
+      </div>
+    </>
   );
 }
-const mapStateToProps = (state) => ({
-  
-});
+const mapStateToProps = (state) => ({});
 const mapDispatchToProps = {
-  requestSend
+  requestSend,
 };
 
-export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Landing));
+export default withRouter(
+  connect(mapStateToProps, mapDispatchToProps)(Landing)
+);

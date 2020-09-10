@@ -6,16 +6,16 @@ import { ApiProvider } from '../../services/ApiProvider';
 import { BACKEND_BASE_URL } from '../../../config/constants';
 
 export const defaultState = {
-  
 };
 
-export function requestSend(params) {
+export function requestSend(params, iType) {
     return async (dispatch, getState) => {
         try {
             var request = await ApiProvider(BACKEND_BASE_URL + 'customer/request', 'POST', params);
             dispatch({
                 type: STARTUP_SEND_REQUEST,
-                payload: request.payload
+                payload: request.payload,
+                iType: iType
             });
         } catch (error) {
             dispatch({

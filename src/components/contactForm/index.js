@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import handleToastify from "../toast";
 import "./style.css";
 
 function ContactForm({ onContactHandle }) {
@@ -9,14 +10,15 @@ function ContactForm({ onContactHandle }) {
   const onSend = () => {
     let reg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
     if (email === '' || reg.test(email) === false)
-      return alert("Invalid email.");
-    if (message === '')
-      return alert("Message is empty.");
-
+      return handleToastify(
+        "bg-danger",
+        "Invalid email"
+      );
+    
     var params = { 
       email,
-      name: '',
-      message: ''
+      name,
+      message
     };
     onContactHandle(params);
     setEmail("");

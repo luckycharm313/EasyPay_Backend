@@ -3,16 +3,23 @@ import {
   STARTUP_ERROR,
   defaultState
 } from '../actions/startup';
-
-const startup = (state = defaultState, { type, payload }) => {
+import handleToastify from '../../components/toast';
+const startup = (state = defaultState, { type, payload, iType = 0 }) => {
   switch (type) {
     case STARTUP_SEND_REQUEST:
-      alert('Thanks for your interest in Easy Pay. We will contact you soon.');
+      handleToastify(
+        "bg-success",
+        iType == 0 ? 'Thanks for requesting a demo, we have emailed you for your records.'
+            : 'Thanks for reaching out. We will get back as soon as possible.'
+      );
       return {
         ...state,
       };
     case STARTUP_ERROR:
-      alert(payload);
+      handleToastify(
+        "bg-danger",
+        payload
+      );
       return { ...state};
     default:
       return state

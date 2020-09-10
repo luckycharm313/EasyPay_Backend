@@ -49,6 +49,9 @@
   padding: 13px 0;
   border: none;
 }
+.contact-btn:focus {
+  outline: none;
+}
 @media only screen and (max-width: 1440px) { 
   .contact-form {
     width: 70%;

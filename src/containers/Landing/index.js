@@ -6,6 +6,7 @@ import EmailForm from "../../components/emailForm";
 import SectionOffer from "../../components/sectionOffer";
 import CardForm from "../../components/cardForm";
 import ContactForm from "../../components/contactForm";
+import handleToastify from "../../components/toast";
 import { offers, deserves_1, deserves_2 } from "../../services/Constants";
 import "./style.css";
 
@@ -13,21 +14,24 @@ function Landing({ requestSend }) {
   const onSendHandle = (email) => {
     let reg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
     if (email === '' || reg.test(email) === false)
-      return alert("Invalid email");
+      return handleToastify(
+        "bg-danger",
+        "Invalid email"
+      );
     var params = { 
       email,
       name: '',
       message: ''
     };
-    requestSend(params);
+    requestSend(params, 0);
   };
 
   const onContactHandle = (params) => {
-    requestSend(params);
+    requestSend(params, 1);
   };
-
+  
   return (
-    <>
+    <> 
       <nav className="navbar header-container main-p">
         <div className="navbar-brand">
           <img
@@ -70,7 +74,7 @@ function Landing({ requestSend }) {
           What we offer
         </h3>
         <p className="section-sub-header">
-          Receive payments and create, a seamless experience with our suite of features. 
+          Receive payments and create a seamless experience with our suite of features. 
         </p>
         <div className="position-relative offer-section">
           <SectionOffer data={offers[0]} iType={1} />

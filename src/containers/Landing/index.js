@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef} from "react";
 import { connect } from "react-redux";
 import { withRouter } from "react-router-dom";
 import { requestSend } from "../../redux/actions/startup";
@@ -11,6 +11,7 @@ import { offers, deserves_1, deserves_2 } from "../../services/Constants";
 import "./style.css";
 
 function Landing({ requestSend }) {
+  const requestForm = useRef(null);
   const onSendHandle = (email) => {
     let reg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
     if (email === '' || reg.test(email) === false)
@@ -29,6 +30,13 @@ function Landing({ requestSend }) {
   const onContactHandle = (params) => {
     requestSend(params, 1);
   };
+
+  const onNavigateRequest = () => {
+    window.scrollTo({
+      top: requestForm.current.offsetTop,
+      behavior: 'smooth'
+    })
+  };
   
   return (
     <> 
@@ -42,11 +50,11 @@ function Landing({ requestSend }) {
             alt=""
           />
         </div>
-        <button type="button" className="btn-request" onClick={onSendHandle}>
+        <button type="button" className="btn-request" onClick={onNavigateRequest}>
           Request a demo
         </button>
       </nav>
-      <div className="container-fluid d-flex flex-column header-bg">
+      <div ref={requestForm} className="container-fluid d-flex flex-column header-bg">
         <div className="txt-header-container">
           <h3 className="txt-header">
             A two-way solution for businesses & everyday consumers

@@ -66,7 +66,7 @@ function Landing({ requestSend }) {
             </strong>
           </p>
           <div className="email-container">
-            <EmailForm onSendHandle={(phone) => onSendHandle(phone)}/>
+            <EmailForm onSendHandle={(email) => onSendHandle(email)}/>
           </div>
         </div>
         <div className="card header-image">
@@ -115,7 +115,7 @@ function Landing({ requestSend }) {
           Try out our application for your organization, and start measuring your financial success rate. 
           </p>
           <div className="email-container">
-            <EmailForm />
+            <EmailForm onSendHandle={(email) => onSendHandle(email)}/>
           </div>
           <img
             src={require("../../assets/hands.png")}

@@ -61,4 +61,29 @@ module.exports = {
       })
     });
   },
+  getCardsByUserID: function (user_id, sort='ASC') {
+    var query = '';
+    if(sort === 'ASC')
+      query = 'SELECT * FROM cards WHERE user_id=? ORDER BY id ASC';
+    else
+      query = 'SELECT * FROM cards WHERE user_id=? ORDER BY id DESC';
+
+    var values = [user_id];    
+    return new Promise(function (resolve, reject) {
+      DB.query(query, values, function (err, data) {
+        if (err) reject(err);
+        else resolve(data.length > 0 ? data : []);
+      })
+    });
+  },
+  removeCardsByID: function (id) {
+    var query = 'DELETE FROM cards WHERE id = ?';
+    var values = [id];    
+    return new Promise(function (resolve, reject) {
+      DB.query(query, values, function (err, data) {
+        if (err) reject(err);
+        else resolve(data.affectedRows > 0 ? true : false);
+      })
+    });
+  },
 }

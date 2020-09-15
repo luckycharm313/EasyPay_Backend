@@ -92,9 +92,38 @@ async function loadProductByCompany (req, res, next) {
   }
 }
 
+async function addNewItem (req, res, next) {  
+  var company_id = res.locals.company_id;
+  const { item, price } = req.body;
+  
+  var created_at = moment(new Date()).format("YYYY-MM-DD hh:mm:ss");
+  var updated_at = moment(new Date()).format("YYYY-MM-DD hh:mm:ss");
+
+  try {
+    let _query =
+      "INSERT INTO products ( company_id, item, price, created_at, updated_at) VALUES (?, ?, ?, ?, ?)";
+    let _value = [company_id, item, price, created_at, updated_at];
+
+    var _result = await new Promise(function (resolve, reject) {
+      DB.query(_query, _value, function (err, data) {
+        if (err) reject(err);
+        else resolve(data.affectedRows > 0 ? true : false);
+      });
+    });
+
+    if (!_result) return common.send(res, 300, "", "Database Error");
+    
+    const _products = await companyModel.getProductsByCompanyId(company_id);  
+    return common.send(res, 200, _products, 'Success');
+  } catch (err) {
+    return common.send(res, 400, '', 'Exception error: ' + err);
+  }
+}
+
 module.exports = {
   add,
   loadCompany,
   register,
-  loadProductByCompany
+  loadProductByCompany,
+  addNewItem
 }

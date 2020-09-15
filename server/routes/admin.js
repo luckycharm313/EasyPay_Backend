@@ -10,6 +10,7 @@ router.post('/employee/add', employee.add);
 router.get('/employee/loadCompany', employee.loadCompany);
 router.post('/employee/register', employee.register);
 router.get('/employee/loadProductByCompany', middleware.admin, employee.loadProductByCompany);
+router.post('/employee/addNewItem', middleware.admin, employee.addNewItem);
 router.post('/receipt/orders', middleware.admin, receipt.orders);
 router.post('/receipt/get', middleware.admin, receipt.get);
 router.post('/receipt/split', middleware.admin, receipt.split);

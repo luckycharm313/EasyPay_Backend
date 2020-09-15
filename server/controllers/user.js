@@ -120,17 +120,64 @@ async function addUserInfo (req, res, next) {
 
       /****** sending email */
       if(email){
-        var subject = 'Welcome to EasyPay'
+        var subject = 'Welcome To EasyPay'
         var html = `
-          <html>
-              <body>
-                  <p>Hi ${firstName} ${lastName}</p>
-                  <p>Welcome to Easy pay, unlock endless opportunities and experience.</p>
-                  <p>Warm Regards,</p>                
-                  <p>Easy Pay Team.</p>                
-              </body>
-          </html>
-        `;
+          <html lang="en">
+            <head>
+              <meta charset="UTF-8">
+              <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+              <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+                integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+              <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+                integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+                crossorigin="anonymous"></script>
+              <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+                integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+                crossorigin="anonymous"></script>
+              <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+                integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+                crossorigin="anonymous"></script>
+            </head>
+            
+            <body>
+              <style type="text/css">
+                .txt-primary {
+                  color: #00020A;
+                  font-size: 16px;
+                }
+            
+                .txt-secondary {
+                  color: #00020A;
+                  font-size: 14px;
+                }
+            
+                .txt-address {
+                  color: #00020A;
+                  font-size: 12px;
+                }
+              </style>
+              <div class="container">
+                <div class="row" style="margin-left: -20px;">
+                  <img alt="EasyPay" class="mt-5" style="margin-right: -10;"
+                    src="https://easypay.s3.us-east-2.amazonaws.com/app_logo.png" width="120" height="41.5" />
+                </div>
+                <div class="row mt-3">
+                  <h6 class="txt-primary">Welcome to EasyPay</h6>
+                </div>
+                <div class="row mt-4 flex-column">
+                  <p class="txt-secondary">Hi ${firstName} ${lastName}</p>
+                  <p class="txt-secondary">Welcome to EasyPay, unlock endless opportunities and experience(s).</p>
+                  <p class="txt-secondary mt-4">Warm Regards,</p>
+                  <p class="txt-secondary">EasyPay Team.</p>
+                </div>
+                <div class="row flex-column pt-4" style="margin-top: 8%; border-top: 1px solid #000002;">
+                  <p class="txt-address mb-0">1692 Coastal Highway, Lewes, DE 19958</p>
+                  <p class="txt-address">©2020 EasyPay Platform LLC.</p>
+                </div>
+              </div>
+            </body>
+            </html>
+          `;
         common.sendEmail(email, subject, html);
       }      
       /***** end */
@@ -219,7 +266,7 @@ async function setRate (req, res, next) {
 async function updateCard (req, res, next) {
   var user_id = res.locals.user_id;
   var params = req.body;
-  const { zip_code, card } = params;
+  const { zip_code, card, id } = params;
   
   var updated_at = moment(new Date()).format('YYYY-MM-DD hh:mm:ss');
 
@@ -228,8 +275,8 @@ async function updateCard (req, res, next) {
     const _user = await userModel.findUserById(user_id);
     if(!_user) return common.send(res, 300, '', 'User not found');
 
-    let _query = 'UPDATE users SET zip_code = ?, card_number = ?, card_cvc = ?, card_exp_month = ?, card_exp_year = ?, card_holder = ?,  updated_at = ? WHERE id = ? ';
-    let _values = [ zip_code, card.number, card.cvc, card.expMonth, card.expYear, card.holder, updated_at, user_id ];
+    let _query = 'UPDATE cards SET zip_code = ?, card_number = ?, card_cvc = ?, card_exp_month = ?, card_exp_year = ?, card_holder = ?,  updated_at = ? WHERE id = ? ';
+    let _values = [ zip_code, card.number, card.cvc, card.expMonth, card.expYear, card.holder, updated_at, id ];
     
     let _result = await new Promise(function (resolve, reject) {
       DB.query(_query, _values, function (err, data) {
@@ -240,10 +287,8 @@ async function updateCard (req, res, next) {
 
     if (!_result) return common.send(res, 300, '', 'Database error');
     
-    const _user_ = await userModel.findUserById(user_id);
-    if(!_user_) return common.send(res, 300, '', 'User not found');
-
-    return common.send(res, 200, _user_, 'Success');
+    let _cardList = await userModel.getCardsByUserID(user_id);
+    return common.send(res, 200, _cardList, 'Success');
   } catch (err) {
     return common.send(res, 400, '', 'Exception error: ' + err);
   }
@@ -348,18 +393,66 @@ async function changePhone (req, res, next) {
 
     /****** sending email */
     if(email){
-      var subject = 'Account Recovery'
+      var subject = 'Information About Your Account - EasyPay Platform'
       var html = `
-        <html>
+        <html lang="en">
+          <head>
+            <meta charset="UTF-8">
+            <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+            <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+              integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+            <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+              integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+              crossorigin="anonymous"></script>
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+              integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+              crossorigin="anonymous"></script>
+            <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+              integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+              crossorigin="anonymous"></script>
+          </head>
+
           <body>
-            <p>Hi ${_user.firstName} ${_user.lastName}</p>
-            <p>Your phone number has been updated on the Easy Pay platform.</p>                
-            <p>While this is rare, If this change wasn’t made by you. PLEASE contact support@easypayplatform.io IMMEDIATELY!!</p>                
-            <p>Please disregard if you made this change to your account. We are just looking ou!.</p>
-            <p>Warm Regards,</p>                
-            <p>Easy Pay Team.</p>                
+            <style type="text/css">
+              .txt-primary {
+                color: #00020A;
+                font-size: 16px;
+              }
+
+              .txt-secondary {
+                color: #00020A;
+                font-size: 14px;
+              }
+
+              .txt-address {
+                color: #00020A;
+                font-size: 12px;
+              }
+            </style>
+            <div class="container">
+              <div class="row" style="margin-left: -20px;">
+                <img alt="EasyPay" class="mt-5" style="margin-right: -10;"
+                  src="https://easypay.s3.us-east-2.amazonaws.com/app_logo.png" width="120" height="41.5" />
+              </div>
+              <div class="row mt-3">
+                <h6 class="txt-primary">Welcome to EasyPay</h6>
+              </div>
+              <div class="row mt-4 flex-column">
+                <p class="txt-secondary">Hi ${_user.firstName} ${_user.lastName}</p>
+                <p class="txt-secondary">Your phone number has been updated on the EasyPay Platform.</p>
+                <p class="txt-secondary">While this is rare, IF this change wasn’t made by you PLEASE contact support@easypayplatform.io IMMEDIATELY!!</p>
+                <p class="txt-secondary">Please disregard this message if you made this change to your account. We are just looking out!</p>
+                <p class="txt-secondary mt-4">Warm Regards,</p>
+                <p class="txt-secondary">EasyPay Team.</p>
+              </div>
+              <div class="row flex-column pt-4" style="margin-top: 8%; border-top: 1px solid #000002;">
+                <p class="txt-address mb-0">1692 Coastal Highway, Lewes, DE 19958</p>
+                <p class="txt-address">©2020 EasyPay Platform LLC.</p>
+              </div>
+            </div>
           </body>
-        </html>
+
+          </html>
       `;
       common.sendEmail(email, subject, html);
     }      
@@ -580,6 +673,189 @@ async function updateToken (req, res, next) {
   }
 }
 
+async function addMoreCard (req, res, next) {
+  var user_id = res.locals.user_id;
+  const { zip_code, card, iType } = req.body;
+
+  var updated_at = moment(new Date()).format('YYYY-MM-DD hh:mm:ss');
+  
+  try {
+    const _user = await userModel.findUserById(user_id);
+    if(!_user) return common.send(res, 300, '', "User doesn't exist.");
+
+    if ( iType === 0 ) {
+      let _query = 'UPDATE users SET zip_code = ?, card_number = ?, card_cvc = ?, card_exp_month = ?, card_exp_year = ?, card_holder = ?,  updated_at = ? WHERE id = ? ';
+      let _values = [ zip_code, card.number, card.cvc, card.expMonth, card.expYear, card.holder, updated_at, user_id ];
+      
+      let _result = await new Promise(function (resolve, reject) {
+        DB.query(_query, _values, function (err, data) {
+          if (err) reject(err);
+          else resolve(data.affectedRows > 0 ? true : false);
+        })
+      })
+  
+      if (!_result) return common.send(res, 300, '', 'Database error');
+      
+      if(_user.card_number) {
+        let __query = 'INSERT INTO cards (user_id, zip_code, card_number, card_cvc, card_exp_month, card_exp_year, card_holder, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)';
+        let __values = [user_id, _user.zip_code, _user.card_number, _user.card_cvc, _user.card_exp_month, _user.card_exp_year, _user.card_holder, updated_at, updated_at];
+        let __result = await new Promise(function (resolve, reject) {
+          DB.query(__query, __values, function (err, data) {
+            if (err) reject(err);
+            else resolve(data.affectedRows > 0 ? data.insertId : false);
+          })
+        })
+        if (!__result) return common.send(res, 300, '', 'Database error');
+      }
+      const __user = await userModel.findUserById(user_id);
+      if(!__user) return common.send(res, 300, '', 'User not found');
+      return common.send(res, 200, __user, 'Success');
+    } else {
+      let __query = 'INSERT INTO cards (user_id, zip_code, card_number, card_cvc, card_exp_month, card_exp_year, card_holder, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)';
+      let __values = [user_id, zip_code, card.number, card.cvc, card.expMonth, card.expYear, card.holder, updated_at, updated_at];
+      let __result = await new Promise(function (resolve, reject) {
+        DB.query(__query, __values, function (err, data) {
+          if (err) reject(err);
+          else resolve(data.affectedRows > 0 ? data.insertId : false);
+        })
+      })
+      if (!__result) return common.send(res, 300, '', 'Database error');
+      let _cardList = await userModel.getCardsByUserID(user_id);
+      return common.send(res, 200, _cardList, 'Success');
+    }    
+  } catch (err) {
+    return common.send(res, 400, '', 'Exception error: ' + err);
+  }
+}
+
+async function removeCard (req, res, next) {
+  var user_id = res.locals.user_id;
+  const { card_id, iType } = req.body;
+  var updated_at = moment(new Date()).format('YYYY-MM-DD hh:mm:ss');
+
+  try {
+    const _user = await userModel.findUserById(user_id);
+    if(!_user) return common.send(res, 300, '', "User doesn't exist.");
+
+    const _cardList = await userModel.getCardsByUserID(user_id);
+    console.log(_cardList);
+    console.log(_cardList.length);
+    if ( iType === 0 ) {
+      if(_cardList.length === 0) {
+        let _query = 'UPDATE users SET zip_code = ?, card_number = ?, card_cvc = ?, card_exp_month = ?, card_exp_year = ?, card_holder = ?,  updated_at = ? WHERE id = ? ';
+        let _values = [ '', '', '', '', '', '', updated_at, user_id ];
+        
+        let _result = await new Promise(function (resolve, reject) {
+          DB.query(_query, _values, function (err, data) {
+            if (err) reject(err);
+            else resolve(data.affectedRows > 0 ? true : false);
+          })
+        })
+    
+        if (!_result) return common.send(res, 300, '', 'Database error');
+      } else {
+        let _query = 'UPDATE users SET zip_code = ?, card_number = ?, card_cvc = ?, card_exp_month = ?, card_exp_year = ?, card_holder = ?,  updated_at = ? WHERE id = ? ';
+        let _values = [ _cardList[0].zip_code, _cardList[0].card_number, _cardList[0].card_cvc, _cardList[0].card_exp_month, _cardList[0].card_exp_year, _cardList[0].card_holder, updated_at, user_id ];
+        
+        let _result = await new Promise(function (resolve, reject) {
+          DB.query(_query, _values, function (err, data) {
+            if (err) reject(err);
+            else resolve(data.affectedRows > 0 ? true : false);
+          })
+        })
+    
+        if (!_result) return common.send(res, 300, '', 'Database error');
+        
+        const __del_card = await userModel.removeCardsByID(_cardList[0].id);
+        if (!__del_card) return common.send(res, 300, '', 'Database error');
+      }
+      
+      const __user = await userModel.findUserById(user_id);
+      if(!__user) return common.send(res, 300, '', 'User not found');
+      return common.send(res, 200, __user, 'Success');
+    } else {
+      const __del_card = await userModel.removeCardsByID(card_id);
+      if (!__del_card) return common.send(res, 300, '', 'Database error');
+      
+      let _cardList = await userModel.getCardsByUserID(user_id);
+      return common.send(res, 200, _cardList, 'Success');
+    }    
+  } catch (err) {
+    return common.send(res, 400, '', 'Exception error: ' + err);
+  }
+}
+
+async function swipeCard (req, res, next) {
+  var user_id = res.locals.user_id;
+  const { iType } = req.body;
+
+  var updated_at = moment(new Date()).format('YYYY-MM-DD hh:mm:ss');
+
+  try {
+    const _user = await userModel.findUserById(user_id);
+    if(!_user) return common.send(res, 300, '', "User doesn't exist.");
+
+    let _cardList = [];
+    if(iType === 0)
+      _cardList = await userModel.getCardsByUserID(user_id);
+    else 
+      _cardList = await userModel.getCardsByUserID(user_id, 'DESC');
+    console.log(_cardList);
+    console.log(_cardList.length);
+    
+    if(_cardList.length > 0) {
+      let _query = 'UPDATE users SET zip_code = ?, card_number = ?, card_cvc = ?, card_exp_month = ?, card_exp_year = ?, card_holder = ?,  updated_at = ? WHERE id = ? ';
+      let _values = [ _cardList[0].zip_code, _cardList[0].card_number, _cardList[0].card_cvc, _cardList[0].card_exp_month, _cardList[0].card_exp_year, _cardList[0].card_holder, updated_at, user_id ];
+      
+      let _result = await new Promise(function (resolve, reject) {
+        DB.query(_query, _values, function (err, data) {
+          if (err) reject(err);
+          else resolve(data.affectedRows > 0 ? true : false);
+        })
+      })
+  
+      if (!_result) return common.send(res, 300, '', 'Database error');
+      
+      const __del_card = await userModel.removeCardsByID(_cardList[0].id);
+      if (!__del_card) return common.send(res, 300, '', 'Database error');
+      
+      if(_user.card_number) {
+        let __query = 'INSERT INTO cards (user_id, zip_code, card_number, card_cvc, card_exp_month, card_exp_year, card_holder, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)';
+        let __values = [user_id, _user.zip_code, _user.card_number, _user.card_cvc, _user.card_exp_month, _user.card_exp_year, _user.card_holder, updated_at, updated_at];
+        let __result = await new Promise(function (resolve, reject) {
+          DB.query(__query, __values, function (err, data) {
+            if (err) reject(err);
+            else resolve(data.affectedRows > 0 ? data.insertId : false);
+          })
+        })
+        if (!__result) return common.send(res, 300, '', 'Database error');
+      }
+
+      const __user = await userModel.findUserById(user_id);
+      if(!__user) return common.send(res, 300, '', 'User not found');
+      return common.send(res, 200, __user, 'Success');
+    } else {
+      return common.send(res, 300, '', 'There is no other cards.');  
+    }    
+  } catch (err) {
+    return common.send(res, 400, '', 'Exception error: ' + err);
+  }
+}
+
+async function getCardList (req, res, next) {
+  var user_id = res.locals.user_id;
+  
+  try {
+    const _user = await userModel.findUserById(user_id);
+    if(!_user) return common.send(res, 300, '', "User doesn't exist.");
+
+    let _cardList = await userModel.getCardsByUserID(user_id);
+    return common.send(res, 200, _cardList, 'Success');
+  } catch (err) {
+    return common.send(res, 400, '', 'Exception error: ' + err);
+  }
+}
+
 module.exports = {
   phone,
   verify,
@@ -593,6 +869,10 @@ module.exports = {
   changePhone,
   blockPush,
   updateToken,
+  addMoreCard,
+  removeCard,
+  swipeCard,
+  getCardList,
   // one time payment
   addOneUser,
   getOne

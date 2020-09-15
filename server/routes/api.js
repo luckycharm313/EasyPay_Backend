@@ -18,6 +18,11 @@ router.post('/user/blockPush', middleware.auth, user.blockPush);
 router.post('/user/setRate', middleware.auth, user.setRate);
 router.post('/user/updateCard', middleware.auth, user.updateCard);
 router.post('/user/updateToken', middleware.auth, user.updateToken);
+router.post('/user/addMoreCard', middleware.auth, user.addMoreCard);
+router.post('/user/removeCard', middleware.auth, user.removeCard);
+router.post('/user/swipeCard', middleware.auth, user.swipeCard);
+router.get('/user/getCardList', middleware.auth, user.getCardList);
+
 router.post('/receipt/get', receipt.get);
 router.post('/receipt/pay', middleware.auth, receipt.pay);
 router.post('/receipt/load', middleware.auth, receipt.loadHistory);

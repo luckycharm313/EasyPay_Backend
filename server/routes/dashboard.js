@@ -9,6 +9,8 @@ var user = require('../controllers/dashboard/user');
 
 router.post('/register', admin.register);
 router.post('/login', admin.login);
+router.post('/forgot', admin.forgot);
+router.post('/reset', admin.reset);
 router.post('/postCompanyInfo', company.postCompanyInfo);
 router.get('/company/getList', middleware.dashboard, company.getList);
 router.post('/company/getProductsByCompany', middleware.dashboard, company.getProductsByCompany);
@@ -30,5 +32,7 @@ router.get('/user/getAdminList', middleware.dashboard, user.getAdminList);
 router.post('/user/deleteAdmin', middleware.dashboard, user.deleteAdmin);
 router.get('/admin/getAdminProfile', middleware.dashboard, admin.getAdminProfile);
 router.post('/admin/updateAdminProfile', middleware.dashboard, admin.updateAdminProfile);
+router.get('/user/getRequest', middleware.dashboard, user.getCustomerRequest);
+router.post('/user/replyRequest', middleware.dashboard, user.replyRequest);
 
 module.exports = router;

@@ -86,24 +86,26 @@ module.exports = {
       })
     });
   },
-  getMonthlyTrans: function ( year ) {
+  getMonthlyTrans: function ( biz_id, year ) {
     var query = `
       SELECT YEAR(FROM_UNIXTIME(receipt_table.paid_date)) AS y, MONTH(FROM_UNIXTIME(receipt_table.paid_date)) AS m, SUM(receipt_table.total) AS total 
       FROM (
-          SELECT paid_date, total 
+          SELECT paid_date, total, employee_id 
           FROM receipts WHERE status= 1 AND is_sub_receipt = 0
           UNION
-          SELECT sub_receipts.paid_date, sub_receipts.cost 
+          SELECT sub_receipts.paid_date, sub_receipts.cost, receipts.employee_id 
           FROM sub_receipts 
           LEFT JOIN receipts 
           ON sub_receipts.parent_receipt_id = receipts.id 
           WHERE receipts.status=0 AND sub_receipts.status = 1
         ) as receipt_table
-      WHERE YEAR(FROM_UNIXTIME(receipt_table.paid_date)) = ?
+      LEFT JOIN employee
+      ON employee.id = receipt_table.employee_id
+      WHERE YEAR(FROM_UNIXTIME(receipt_table.paid_date)) = ? AND employee.company_id = ?
       GROUP BY YEAR(FROM_UNIXTIME(receipt_table.paid_date)), MONTH(FROM_UNIXTIME(receipt_table.paid_date))
       ORDER BY YEAR(FROM_UNIXTIME(receipt_table.paid_date)), MONTH(FROM_UNIXTIME(receipt_table.paid_date))
     `;
-    var values = [year];
+    var values = [year, biz_id];
     
     return new Promise(function (resolve, reject) {
       DB.query(query, values, function (err, data) {
@@ -113,24 +115,26 @@ module.exports = {
     });
     
   },
-  getWeeklyTrans: function ( year ) {
+  getWeeklyTrans: function ( biz_id, year ) {
     var query = `
     SELECT WEEKDAY(FROM_UNIXTIME(receipt_table.paid_date)) AS w, SUM(receipt_table.total) AS total 
     FROM (
-        SELECT paid_date, total 
+        SELECT paid_date, total, employee_id 
         FROM receipts WHERE status= 1 AND is_sub_receipt = 0
         UNION
-        SELECT sub_receipts.paid_date, sub_receipts.cost 
+        SELECT sub_receipts.paid_date, sub_receipts.cost, receipts.employee_id 
         FROM sub_receipts 
         LEFT JOIN receipts 
         ON sub_receipts.parent_receipt_id = receipts.id 
         WHERE receipts.status=0 AND sub_receipts.status = 1
       ) as receipt_table
-    WHERE YEAR(FROM_UNIXTIME(receipt_table.paid_date)) = ?
+    LEFT JOIN employee
+    ON employee.id = receipt_table.employee_id
+    WHERE WEEK(FROM_UNIXTIME(receipt_table.paid_date)) = WEEK(CURDATE()) AND YEAR(FROM_UNIXTIME(receipt_table.paid_date)) = ? AND employee.company_id = ?
     GROUP BY WEEKDAY(FROM_UNIXTIME(receipt_table.paid_date))
     ORDER BY WEEKDAY(FROM_UNIXTIME(receipt_table.paid_date))
     `;
-    var values = [year];
+    var values = [year, biz_id];
     
     return new Promise(function (resolve, reject) {
       DB.query(query, values, function (err, data) {

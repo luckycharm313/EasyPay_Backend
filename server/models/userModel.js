@@ -86,4 +86,16 @@ module.exports = {
       })
     });
   },
+  getCustomerRequest: function () {
+
+    var query = 'SELECT * FROM customers';
+    var values = [];
+    
+    return new Promise(function (resolve, reject) {
+      DB.query(query, values, function (err, data) {
+        if (err) reject(err);
+        else resolve(data.length > 0 ? data : []);
+      })
+    });
+  },
 }

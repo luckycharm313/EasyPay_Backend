@@ -202,9 +202,9 @@ async function addUserInfo(req, res, next) {
                 }
               </style>
               <div class="container">
-                <div class="row" style="margin-left: -20px;">
-                  <img alt="EasyPay" class="mt-5" style="margin-right: -10;"
-                    src="https://easypay.s3.us-east-2.amazonaws.com/app_logo.png" width="120" height="41.5" />
+                <div class="row">
+                  <img alt="EasyPay" class="mt-5"
+                    src="https://easypay.s3.us-east-2.amazonaws.com/app_logo.png" width="120" height="34.3" />
                 </div>
                 <div class="row mt-3">
                   <h6 class="txt-primary">Welcome to EasyPay</h6>

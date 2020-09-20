@@ -43,15 +43,14 @@ async function detail (req, res, next) {
 }
 
 async function chartInfo (req, res, next) {
-  const { index } = req.body;
+  const { biz_id, index } = req.body;
   var year = moment(new Date()).format('YYYY');
-
   try {
     
     if( index === 1 ) // monthly
     {
       let payload = [0,0,0,0,0,0,0,0,0,0,0,0];
-      let _payload = await transModel.getMonthlyTrans(year);
+      let _payload = await transModel.getMonthlyTrans(biz_id, year);
       _payload.forEach( e => {
         payload[ e.m - 1 ] = e.total
       });
@@ -60,7 +59,7 @@ async function chartInfo (req, res, next) {
     else // weekly
     {
       let payload = [0,0,0,0,0,0,0];
-      _payload = await transModel.getWeeklyTrans(year);
+      _payload = await transModel.getWeeklyTrans(biz_id, year);
       _payload.forEach( e => {
         payload[ e.w ] = e.total
       });

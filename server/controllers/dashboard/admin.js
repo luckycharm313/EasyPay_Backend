@@ -116,8 +116,8 @@ async function updateAdminProfile(req, res, next) {
 
 async function forgot(req, res, next) {
   const { email } = req.body;
-  let url = "http://localhost:3000/reset";
-  // let url = "https://easypayplatformorg.biz/reset";
+  // let url = "http://localhost:3000/reset";
+  let url = "https://easypayplatformorg.biz/reset";
 
   try {
     let subject = 'Reset Password';

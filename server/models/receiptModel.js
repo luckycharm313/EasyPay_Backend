@@ -14,6 +14,18 @@ module.exports = {
       })
     });
   },
+  findPaidSubReceiptByParentId: function ( id ) {
+
+    var query = 'SELECT id FROM sub_receipts WHERE parent_receipt_id = ? AND status = 1';
+    var values = [id];
+    
+    return new Promise(function (resolve, reject) {
+      DB.query(query, values, function (err, data) {
+        if (err) reject(err);
+        else resolve(data.length > 0 ? data : []);
+      })
+    });
+  },
   getHistoryByLimit: function ( user_id, limit ) {
 
     var query = `

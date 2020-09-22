@@ -123,9 +123,14 @@ async function pay (req, res, next) {
 
       const _employee = await employeeModel.findUserById(receipt.employee_id);
       if(!_employee) return common.send(res, 300, '', 'Employee not found');
-      
+      let paid_sub_receipt_ids = [];
+      if( Object.keys(sub_receipts).length ) {
+        paid_sub_receipt_ids = await receiptModel.findPaidSubReceiptByParentId(receipt.id);
+      }
       let sendData = {
-        isPaid: true
+        receipt_id: receipt.id,
+        sub_receipt_numbers: receipt.sub_receipt_numbers,
+        paid_sub_receipt_ids
       }
 
       common.sendDataThroughFCM(_employee.push_token, sendData, function (response) {
@@ -265,7 +270,7 @@ async function payOne (req, res, next) {
       common.sendDataThroughFCM(_employee.push_token, sendData, function (response) {
         console.log('push data response => ', response);
       })
-      
+
       let payload = {
         total: parseFloat(original_cost) + parseFloat(tip),
         percent,

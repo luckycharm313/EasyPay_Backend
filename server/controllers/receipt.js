@@ -121,6 +121,17 @@ async function pay (req, res, next) {
         original_cost = parseFloat(receipt.total);
       }
 
+      const _employee = await employeeModel.findUserById(receipt.employee_id);
+      if(!_employee) return common.send(res, 300, '', 'Employee not found');
+      
+      let sendData = {
+        isPaid: true
+      }
+
+      common.sendDataThroughFCM(_employee.push_token, sendData, function (response) {
+        console.log('push data response => ', response);
+      })
+
       let payload = {
         total: parseFloat(original_cost) + parseFloat(tip),
         percent,
@@ -128,6 +139,7 @@ async function pay (req, res, next) {
       }
       console.log({payload})
       return common.send(res, 200, payload, 'Success');
+
     }
   } catch (err) {
     // save the data when decline the payment
@@ -243,6 +255,17 @@ async function payOne (req, res, next) {
         original_cost = parseFloat(receipt.total);
       }
 
+      const _employee = await employeeModel.findUserById(receipt.employee_id);
+      if(!_employee) return common.send(res, 300, '', 'Employee not found');
+      
+      let sendData = {
+        isPaid: true
+      }
+
+      common.sendDataThroughFCM(_employee.push_token, sendData, function (response) {
+        console.log('push data response => ', response);
+      })
+      
       let payload = {
         total: parseFloat(original_cost) + parseFloat(tip),
         percent,

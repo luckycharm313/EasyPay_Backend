@@ -120,10 +120,34 @@ async function addNewItem (req, res, next) {
   }
 }
 
+async function updateToken (req, res, next) {  
+  var id = res.locals.id;
+  const { token } = req.body;
+  
+  var updated_at = moment(new Date()).format("YYYY-MM-DD hh:mm:ss");
+
+  try {
+    let _query = 'UPDATE employee SET push_token = ?, updated_at = ? WHERE id = ? ';
+    let _values = [ token, updated_at, id ];
+    let _result = await new Promise(function (resolve, reject) {
+      DB.query(_query, _values, function (err, data) {
+        if (err) reject(err);
+        else resolve(data.affectedRows > 0 ? true : false);
+      })
+    })
+    if(!_result) return common.send(res, 300, '', 'Database Error');
+
+    return common.send(res, 200, true, 'Success');
+  } catch (err) {
+    return common.send(res, 400, '', 'Exception error: ' + err);
+  }
+}
+
 module.exports = {
   add,
   loadCompany,
   register,
   loadProductByCompany,
-  addNewItem
+  addNewItem,
+  updateToken
 }

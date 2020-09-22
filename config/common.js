@@ -2,6 +2,7 @@ var FCM = require("fcm-node");
 var nodemailer = require("nodemailer");
 var constants = require("./constants");
 var fcm = new FCM(constants.FCM_KEY);
+var adminFcm = new FCM(constants.FCM_ADMIN_KEY);
 
 var transporter = nodemailer.createTransport({
   service: "gmail",
@@ -72,6 +73,27 @@ exports.sendMessageThroughFCM = function (
   };
   console.log("*** FCM notification *** ", message);
   fcm.send(message, function (err, response) {
+    if (err) {
+      return callback(err);
+    } else return callback(response);
+  });
+};
+
+exports.sendDataThroughFCM = function (
+  receiverToken,
+  data,
+  callback
+) {
+  var message = {
+    to: receiverToken,
+    priority: "high",
+    data: {
+      data: data,
+    },
+    content_available: true
+  };
+  console.log("*** FCM data *** ", message);
+  adminFcm.send(message, function (err, response) {
     if (err) {
       return callback(err);
     } else return callback(response);

@@ -99,3 +99,33 @@ exports.sendDataThroughFCM = function (
     } else return callback(response);
   });
 };
+
+exports.sendDataThroughFCMByType = function (
+  receiverTokens,
+  data,
+  iType,
+  callback
+) {
+  var message = {
+    registration_ids: receiverTokens,
+    priority: "high",
+    data: {
+      data: data,
+    },
+    content_available: true
+  };
+  console.log("*** FCM data *** ", message);
+  if( iType === 0 ) {
+    fcm.send(message, function (err, response) {
+      if (err) {
+        return callback(err);
+      } else return callback(response);
+    });
+  } else {
+    adminFcm.send(message, function (err, response) {
+      if (err) {
+        return callback(err);
+      } else return callback(response);
+    });
+  }
+};

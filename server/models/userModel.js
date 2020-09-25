@@ -1,3 +1,4 @@
+const { stat } = require('fs');
 var Promise = require('promise');
 var DB = require('../../config/database');
 
@@ -37,10 +38,10 @@ module.exports = {
       })
     });
   },
-  getAllUsers: function () {
+  getAllUsers: function (status) {
 
-    var query = 'SELECT * FROM users WHERE user_type = ?';
-    var values = [1];
+    var query = 'SELECT * FROM users WHERE user_type = ? AND status = ?';
+    var values = [1, status];
     
     return new Promise(function (resolve, reject) {
       DB.query(query, values, function (err, data) {

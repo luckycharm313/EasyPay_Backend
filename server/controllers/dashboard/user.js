@@ -4,8 +4,9 @@ var DB = require("../../../config/database");
 var userModel = require("../../models/userModel");
 
 async function getList(req, res, next) {
+  const { status } = req.body;
   try {
-    const _users = await userModel.getAllUsers();
+    const _users = await userModel.getAllUsers(status);
     return common.send(res, 200, _users, "Success");
   } catch (err) {
     return common.send(res, 400, "", "Exception error: " + err);
@@ -14,22 +15,46 @@ async function getList(req, res, next) {
 
 async function deleteUser(req, res, next) {
   var params = req.body;
-  const { index } = params;
+  const { index, status } = params;
+  var updated_at = moment(new Date()).format("YYYY-MM-DD hh:mm:ss");
 
   try {
-    let del_query = "DELETE FROM users WHERE id = ? ";
-    let del_values = [index];
+    if( status === 1 ) {
+      let del_query = "DELETE FROM users WHERE id = ? ";
+      let del_values = [index];
 
-    let del_result = await new Promise(function (resolve, reject) {
-      DB.query(del_query, del_values, function (err, data) {
-        if (err) reject(err);
-        else resolve(data.affectedRows > 0 ? true : false);
+      let del_result = await new Promise(function (resolve, reject) {
+        DB.query(del_query, del_values, function (err, data) {
+          if (err) reject(err);
+          else resolve(data.affectedRows > 0 ? true : false);
+        });
       });
-    });
 
-    if (!del_result) return common.send(res, 300, "", "Database Error");
+      if (!del_result) return common.send(res, 300, "", "Database Error");
+    } else {
+      let _query =
+        "UPDATE users SET status = ?, updated_at = ? WHERE id = ? ";
+      let _values = [1, updated_at, index];
 
-    const _users = await userModel.getAllUsers();
+      let _result = await new Promise(function (resolve, reject) {
+        DB.query(_query, _values, function (err, data) {
+          if (err) reject(err);
+          else resolve(data.affectedRows > 0 ? true : false);
+        });
+      });
+      if (!_result) return common.send(res, 300, "", "Database Error");
+
+      let _user_ = await userModel.findUserById(index);
+      let sendData = {
+        isLogout: true,
+      }
+      let receivers = [_user_.push_token];
+      common.sendDataThroughFCMByType(receivers, sendData, 0, function (response) {
+        console.log('push data response => ', response);
+      })
+    }
+    
+    const _users = await userModel.getAllUsers(status);
     return common.send(res, 200, _users, "Success");
   } catch (err) {
     return common.send(res, 400, "", "Exception error: " + err);
@@ -38,23 +63,52 @@ async function deleteUser(req, res, next) {
 
 async function blockUser(req, res, next) {
   var params = req.body;
-  const { index, isBlock } = params;
+  const { index, isBlock, status, isUndo } = params;
 
   var updated_at = moment(new Date()).format("YYYY-MM-DD hh:mm:ss");
 
   try {
-    let _query = "UPDATE users SET isBlock = ?, updated_at = ? WHERE id = ? ";
-    let _values = [isBlock, updated_at, index];
+    if( isUndo ) {
+      let _query =
+      "UPDATE users SET status=?, updated_at = ? WHERE id = ? ";
+      let _values = [
+        0,
+        updated_at,
+        index,
+      ];
 
-    let _result = await new Promise(function (resolve, reject) {
-      DB.query(_query, _values, function (err, data) {
-        if (err) reject(err);
-        else resolve(data.affectedRows > 0 ? true : false);
+      let _result = await new Promise(function (resolve, reject) {
+        DB.query(_query, _values, function (err, data) {
+          if (err) reject(err);
+          else resolve(data.affectedRows > 0 ? true : false);
+        });
       });
-    });
-    if (!_result) return common.send(res, 300, "", "Database Error");
+      if (!_result) return common.send(res, 300, "", "Database Error");
+    } else {
+      let _query = "UPDATE users SET isBlock = ?, updated_at = ? WHERE id = ? ";
+      let _values = [isBlock, updated_at, index];
+  
+      let _result = await new Promise(function (resolve, reject) {
+        DB.query(_query, _values, function (err, data) {
+          if (err) reject(err);
+          else resolve(data.affectedRows > 0 ? true : false);
+        });
+      });
+      if (!_result) return common.send(res, 300, "", "Database Error");
 
-    const _users = await userModel.getAllUsers();
+      if( isBlock === 1 ){
+        let _user_ = await userModel.findUserById(index);
+        let sendData = {
+          isLogout: true,
+        }
+        let receivers = [_user_.push_token];
+        common.sendDataThroughFCMByType(receivers, sendData, 0, function (response) {
+          console.log('push data response => ', response);
+        })
+      }
+    }  
+
+    const _users = await userModel.getAllUsers(status);
     return common.send(res, 200, _users, "Success");
   } catch (err) {
     return common.send(res, 400, "", "Exception error: " + err);

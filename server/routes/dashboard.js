@@ -12,7 +12,7 @@ router.post('/login', admin.login);
 router.post('/forgot', admin.forgot);
 router.post('/reset', admin.reset);
 router.post('/postCompanyInfo', company.postCompanyInfo);
-router.get('/company/getList', middleware.dashboard, company.getList);
+router.post('/company/getList', middleware.dashboard, company.getList);
 router.post('/company/getProductsByCompany', middleware.dashboard, company.getProductsByCompany);
 router.post('/company/updateProduct', middleware.dashboard, company.updateProduct);
 router.post('/company/addProduct', middleware.dashboard, company.addProduct);
@@ -25,7 +25,7 @@ router.post('/transaction/detail', middleware.dashboard, transaction.detail);
 
 router.post('/transaction/chartInfo', middleware.dashboard, transaction.chartInfo);
 
-router.get('/user/getList', middleware.dashboard, user.getList);
+router.post('/user/getList', middleware.dashboard, user.getList);
 router.post('/user/deleteUser', middleware.dashboard, user.deleteUser);
 router.post('/user/blockUser', middleware.dashboard, user.blockUser);
 router.get('/user/getAdminList', middleware.dashboard, user.getAdminList);

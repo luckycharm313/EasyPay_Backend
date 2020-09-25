@@ -47,7 +47,7 @@ async function add (req, res, next) {
 
 async function loadCompany (req, res, next) {
   try {
-    const companyInfo = await companyModel.getCompanyList();
+    const companyInfo = await companyModel.getCompanyList(-1);
     return common.send(res, 200, companyInfo, 'Success');
   } catch (err) {
     return common.send(res, 400, '', 'Exception error: ' + err);

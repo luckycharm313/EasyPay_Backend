@@ -38,4 +38,14 @@ module.exports = {
       })
     });
   },
+  findEmployeeByCompanyId: function ( id ) {
+    var query = `SELECT * FROM employee WHERE company_id = ?`;
+    var values = [id];    
+    return new Promise(function (resolve, reject) {
+      DB.query(query, values, function (err, data) {
+        if (err) reject(err);
+        else resolve(data.length > 0 ? data : []);
+      })
+    });
+  },
 }

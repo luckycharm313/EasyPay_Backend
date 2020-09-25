@@ -92,7 +92,9 @@ async function verify(req, res, next) {
 
         if (!_result) return common.send(res, 300, "", "Database error");
 
-        return common.send(res, 200, token, "Success");
+        const _user_ = await userModel.findUserByPhone(phone);
+
+        return common.send(res, 200, _user_, "Success");
       } else {
         return common.send(res, 200, null, "Success");
       }

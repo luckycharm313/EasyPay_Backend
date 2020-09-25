@@ -14,9 +14,17 @@ module.exports = {
       })
     });
   },
-  getCompanyList: function() {
-    var query = 'SELECT * FROM companies';
+  getCompanyList: function(status) {
+    var query = '';
     var values = [];
+    if(status === -1){
+      query = 'SELECT * FROM companies';
+      values = [];
+    } else {
+      query = 'SELECT * FROM companies WHERE status = ?';
+      values = [status];
+    }
+    
     
     return new Promise(function (resolve, reject) {
       DB.query(query, values, function (err, data) {
